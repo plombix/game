@@ -44,8 +44,8 @@ class GameWindow <Gosu::Window
 
 	def up_frame
 		@frame +=1
-		@skrolIndex -=10
-		if @skrolIndex* -1 >= @starscroll.height- 1024 then @skrolIndex =0 end
+		@skrolIndex +=10
+		if @skrolIndex >= 0 then @skrolIndex = -@starscroll.height+1024 end
 		if @frame > 99 then @frame = 0 end
 	end
 	def frameReset
@@ -67,7 +67,7 @@ class GameWindow <Gosu::Window
 			end
 		elsif @gameState == 1 									# 1 = Game in progress
 			if @badguy.size == 0
-				@badguy << Fighter.new(self ,self.width/10,@seed[0])<< Assault.new(self , (width/10)*2,@seed[1])<< Cruiser.new(self , (width/10)*3,@seed[2]) << Fighter.new(self , (width/10)*4,@seed[3]) << Fighter.new(self , (width/10)*5,@seed[4]) << Fighter.new(self , (width/10)*6,@seed[5]) << Fighter.new(self , (width/10)*7,@seed[6]) << Fighter.new(self , (width/10)*8,@seed[7]) << Fighter.new(self , (width/10)*9,@seed[8])
+				@badguy << Fighter.new(self ,self.width/10,@seed[0]-200)<< Assault.new(self , (width/10)*2,@seed[1]-200)<< Cruiser.new(self , (width/10)*3,@seed[2]-200) << Fighter.new(self , (width/10)*4,@seed[3]-200) << Fighter.new(self , (width/10)*5,@seed[4]-200) << Fighter.new(self , (width/10)*6,@seed[5]-200) << Fighter.new(self , (width/10)*7,@seed[6]-200) << Fighter.new(self , (width/10)*8,@seed[7]-200) << Fighter.new(self , (width/10)*9,@seed[8]-200)
 			end
 			@badguy.reject! {|x| x.energy <= 0}
 			@badguy.reject! {|x| x.y>=self.height}
@@ -122,8 +122,6 @@ class GameWindow <Gosu::Window
 			unless @badguy.empty?
 				@badguy.each do |x|
 					x.draw(x.x, x.y)
-					if x.energy >= 0
-					end
 				end
 			end
 			unless @bulletrain.empty?
