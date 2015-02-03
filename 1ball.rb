@@ -10,8 +10,14 @@ class GameWindow <Gosu::Window
 
     #############VarInit
     @seed= [] ; while @seed.count< 21 ; @seed<<rand(1..30)*15; end;
-    @bulletrain = @bulletfall = @bulletchain = @badguy = @hardguy= []
-    @frame = @totaltime = @skrolIndex = 0
+    @bulletrain = []
+    @bulletfall = []
+    @bulletchain = []
+    @badguy =  []
+    @hardguy= []
+    @frame = 0
+    @totaltime = 0
+    @skrolIndex = 0
     @gameState = 0          # 0 = Start menu  1 = Game in progress  2 = Game in pause  3 = Game in end of day 4 = Game in mana
     #############Sounds
     @wait_a_min = Gosu::Sample.new(self, "sound/wait-a-minute.wav")
@@ -63,9 +69,9 @@ class GameWindow <Gosu::Window
         close
       end
     elsif @gameState == 1                                              # 1 = Game in progress
-      # if @badguy.size == 0
-      #      @badguy << Fighter.new(self ,self.width/10,@seed[0]-200)<< Assault.new(self , (width/10)*2,@seed[1]-200)<< Cruiser.new(self , (width/10)*3,@seed[2]-200) << Fighter.new(self , (width/10)*4,@seed[3]-200) << Fighter.new(self , (width/10)*5,@seed[4]-200) << Fighter.new(self , (width/10)*6,@seed[5]-200) << Fighter.new(self , (width/10)*7,@seed[6]-200) << Fighter.new(self , (width/10)*8,@seed[7]-200) << Fighter.new(self , (width/10)*9,@seed[8]-200)
-      # end
+      if @badguy.size == 0
+        @badguy << Fighter.new(self ,self.width/10,@seed[0]-200)<< Assault.new(self , (width/10)*2,@seed[1]-200)<< Cruiser.new(self , (width/10)*3,@seed[2]-200) << Fighter.new(self , (width/10)*4,@seed[3]-200) << Fighter.new(self , (width/10)*5,@seed[4]-200) << Fighter.new(self , (width/10)*6,@seed[5]-200) << Fighter.new(self , (width/10)*7,@seed[6]-200) << Fighter.new(self , (width/10)*8,@seed[7]-200) << Fighter.new(self , (width/10)*9,@seed[8]-200)
+      end
       @badguy.reject! {|x| x.energy <= 0}
       @badguy.reject! {|x| x.y>=self.height}
       @totaltime += 1
@@ -78,7 +84,7 @@ class GameWindow <Gosu::Window
       @badguy.each do |x|
         x.move(x.x, x.y)
       end
-      if@frame % 30 == 0
+      if@frame % 50 == 0
         @badguy.each {|x| @bulletfall<<x.shoot(self)}
       end
 
@@ -115,21 +121,21 @@ class GameWindow <Gosu::Window
       @starscroll.draw(0,@skrolIndex,1)
       @current_balance.draw(@player.balance,0,0,2)
       @player.draw
-      # unless @badguy.empty?
-      #   @badguy.each do |x|
-      #     x.draw(x.x, x.y)
-      #   end
-      # end
+      unless @badguy.empty?
+        @badguy.each do |x|
+          x.draw(x.x , x.y)
+        end
+      end
       unless @bulletrain.empty?
-        @bulletrain.each do |x|
-          x.draw
-          if x.y <= 0
+        @bulletrain.each do |e|
+          e.draw
+          if e.y <= 0
             @bulletrain = @bulletrain.drop(1)
           end
           @badguy.each do |o|
-            if o.limits?((x.x.round)..(x.x.round+x.width), (x.y.round)..(x.y.round+x.height))
-              o.hit x.pow
-              @damageFire.each do |s|; s.draw(x.x-s.width/2+x.width/2, x.y-s.height, 4); end
+            if o.limits?((e.x.round)..(e.x.round+e.width), (e.y.round)..(e.y.round+e.height))
+              o.hit e.pow,10
+              @damageFire.each do |s|; s.draw(e.x-s.width/2+e.width/2, e.y-s.height, 4); end
               @bulletrain = @bulletrain.drop(1)
             end
           end
@@ -199,7 +205,7 @@ class Bullet
     @x ,@y = x,y
     @bulVel_x , @bulVel_y = 1
   end
-  def draw ;                    @bullet.draw @x,@y-=30,0 ;end
+  def draw;                    @bullet.draw @x,@y-=30,0 ;end
   def x ;                         @x ;end
   def y ;                         @y ;end
   def width ;                         @bullet.width ;end
@@ -224,7 +230,7 @@ class FighterBullet1<Bullet
     @pow = 5
     @speed = 40
   end
-  def draw;                     @bullet.draw @x ,@y +=10, 0 ;end
+  def draw;                     @bullet.draw @x,@y +=10, 0 ;end
 end
 
 class AssaultBullet1<Bullet
@@ -234,7 +240,7 @@ class AssaultBullet1<Bullet
     @pow = 5
     @speed = 40
   end
-  def draw ;                    @bullet.draw @x,@y+=10,0 ;end
+  def draw;                    @bullet.draw @x,@y+=10,0 ;end
 end
 class AssaultBullet2<Bullet
   def initialize(window ,x, y)
@@ -243,7 +249,7 @@ class AssaultBullet2<Bullet
     @pow = 5
     @speed = 40
   end
-  def draw ;                    @bullet.draw @x,@y+=10,0 ;end
+  def draw;                    @bullet.draw @x,@y+=10,0 ;end
 end
 class CruiserBullet1<Bullet
   def initialize(window ,x, y)
@@ -252,7 +258,7 @@ class CruiserBullet1<Bullet
     @pow = 5
     @speed = 40
   end
-  def draw ;                    @bullet.draw @x,@y+=10,0 ;end
+  def draw;                    @bullet.draw @x,@y+=10,0 ;end
 end
 class CruiserBullet2<Bullet
   def initialize(window ,x, y)
@@ -261,7 +267,7 @@ class CruiserBullet2<Bullet
     @pow = 5
     @speed = 40
   end
-  def draw ;                    @bullet.draw @x,@y+=10,0 ;end
+  def draw;                    @bullet.draw @x,@y+=10,0 ;end
 end
 class Enemy
   def initialize(window, x, y)
@@ -273,13 +279,14 @@ class Enemy
     @shootSpeed = 10
     @image = Gosu::Image.new(window,"img/Enemy1.png")
   end
-  def draw (x,y) ;@image.draw(x,y,0) ;end
+  def draw(x, y);     @image.draw(x, y,0); end
   def x;                          @x; end
   def y;                          @y; end
   def move (x,y);           @x= x; @y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
   def energy ;               @energy; end
-  def hit (pow)
+  def hit (pow, recoil)
     @energy -= pow
+    @y-= recoil
   end
   def limits? (x,y)
     if x.any? {|o| (@x.round..(@x.round + @image.width)).include? o } && y.any? {|i| (@y.round..(@y.round + @image.height)).include? i }
