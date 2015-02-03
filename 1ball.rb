@@ -273,9 +273,7 @@ class Enemy
     @shootSpeed = 10
     @image = Gosu::Image.new(window,"img/Enemy1.png")
   end
-  def draw (x,y)
-    @image.draw(x,y,0)
-  end
+  def draw (x,y) ;@image.draw(x,y,0) ;end
   def x;                          @x; end
   def y;                          @y; end
   def move (x,y);           @x= x; @y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
