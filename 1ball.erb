@@ -6,7 +6,7 @@ require 'pry-debugger'
 class GameWindow <Gosu::Window
 
 	def initialize
-		super(1620, 1024, true)
+		super(1620, 1024, false)
 
 #############VarInit
 		@seed= [] ; while @seed.count< 21 ; @seed<<rand(1..30)*15; end;
@@ -35,7 +35,7 @@ class GameWindow <Gosu::Window
 #############Entity
 		@player = Player.new(self)
 		# @badguy = Enemy.new(self , 1 ,1,1)
-		@hardguy <<Cruiser.new(self , (width/10)*3,@seed[2])
+		# @hardguy << Cruiser.new(self , srand(100,1620),@seed[2])
 		@badguy << Fighter.new(self ,self.width/10,@seed[0])<< Assault.new(self , (width/10)*2,@seed[1])<< Fighter.new(self , (width/10)*4,@seed[3]) << Fighter.new(self , (width/10)*5,@seed[4]) << Fighter.new(self , (width/10)*6,@seed[5]) << Fighter.new(self , (width/10)*7,@seed[6]) << Fighter.new(self , (width/10)*8,@seed[7]) << Fighter.new(self , (width/10)*9,@seed[8])
 	end
 
@@ -63,9 +63,9 @@ class GameWindow <Gosu::Window
 				close
 			end
 		elsif @gameState == 1 									# 1 = Game in progress
-			if @badguy.size == 0
-				@badguy << Fighter.new(self ,self.width/10,@seed[0]-200)<< Assault.new(self , (width/10)*2,@seed[1]-200)<< Cruiser.new(self , (width/10)*3,@seed[2]-200) << Fighter.new(self , (width/10)*4,@seed[3]-200) << Fighter.new(self , (width/10)*5,@seed[4]-200) << Fighter.new(self , (width/10)*6,@seed[5]-200) << Fighter.new(self , (width/10)*7,@seed[6]-200) << Fighter.new(self , (width/10)*8,@seed[7]-200) << Fighter.new(self , (width/10)*9,@seed[8]-200)
-			end
+			# if @badguy.size == 0
+			# 	@badguy << Fighter.new(self ,self.width/10,@seed[0]-200)<< Assault.new(self , (width/10)*2,@seed[1]-200)<< Cruiser.new(self , (width/10)*3,@seed[2]-200) << Fighter.new(self , (width/10)*4,@seed[3]-200) << Fighter.new(self , (width/10)*5,@seed[4]-200) << Fighter.new(self , (width/10)*6,@seed[5]-200) << Fighter.new(self , (width/10)*7,@seed[6]-200) << Fighter.new(self , (width/10)*8,@seed[7]-200) << Fighter.new(self , (width/10)*9,@seed[8]-200)
+			# end
 			@badguy.reject! {|x| x.energy <= 0}
 			@badguy.reject! {|x| x.y>=self.height}
 			@totaltime += 1
@@ -113,7 +113,6 @@ class GameWindow <Gosu::Window
 		elsif @gameState == 1 									# 1 = Game in progress
 			@background_image.draw_as_quad(0, 0, 0xffffffff, self.width, 0, 0xffffffff, self.width, self.height, 0xffffffff, 0, self.height, 0xffffffff, 0)
 			@starscroll.draw(0,@skrolIndex,1)
-			# @starscrollsp.draw(0,@oko*2,1)
 			@current_balance.draw(@player.balance,0,0,2)
 			@player.draw
 			unless @badguy.empty?
@@ -225,7 +224,7 @@ class FighterBullet1<Bullet
 		@pow = 5
 		@speed = 40
 	end
-	def draw; 				@bullet.draw @x ,@y+=10,0 ;end
+	def draw; 				@bullet.draw @x ,@y +=10, 0 ;end
 end
 
 class AssaultBullet1<Bullet
@@ -274,7 +273,9 @@ class Enemy
 		@shootSpeed = 10
 		@image = Gosu::Image.new(window,"img/Enemy1.png")
 	end
-	def draw(x, y); 		@image.draw(x, y,0); end
+	def draw(x , y)
+		@image.draw(x,y,0)
+	end
 	def x;		 			@x; end
 	def y; 					@y; end
 	def move (x,y); 		@x= x; @y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
@@ -327,11 +328,11 @@ class Cruiser<Enemy
 	end
 	def move (x,y)
 		@x = ((@windowWidth/2)- @image.width) + (Math.sin(Gosu::milliseconds / 1333.7)*((@windowWidth/2)- @image.width))
-	 	@y =  y += 1
-	 end
-	 def shoot (window)
-	 	CruiserBullet1.new(window,@x+@image.width/2, @y+@image.height)
-	 end
+		@y =  y += 1
+	end
+	def shoot (window)
+		CruiserBullet1.new(window,@x+@image.width/2, @y+@image.height)
+	end
 end
 window = GameWindow.new
 window.show
