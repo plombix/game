@@ -76,16 +76,20 @@ class GameWindow <Gosu::Window
         end
       end
       @player.hurt_by(@bulletfall)
-      if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed ==0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; @pew.play; end; end
+      if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
+      if button_down? Gosu::MsRight ;if @frame % @player.shootSpeed ==0;@bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
       @badguy.reject! {|x| x.energy <= 0 || x.y>=self.height}
       @bulletfall.reject! {|x| (x.y>=self.height)}
     elsif @gameState == 2                                         # 2 = Game in pause
       if button_down? Gosu::KbReturn ;sleep(0.5) ;@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
     end
+
   end
 
-
-
+  # Bullet__158.66666666666666__-11.851851851851848
+  # 162__120
+  # Bullet__223.85185185185185__-5.333333333333371
+  # 162__60
 
 
   def draw
@@ -94,7 +98,6 @@ class GameWindow <Gosu::Window
       @start_text1.draw width/2 - @start_text1.width/2, height- 170, 10
       @start_text2.draw width/2 - @start_text2.width/2, height- 100, 10
     elsif @gameState == 1                                              # 1 = Game in progress
-      if button_down? Gosu::MsRight ;if @frame % @player.shootSpeed ==0;@bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
       @background_image.draw_as_quad(0, 0, 0xffffffff, self.width, 0, 0xffffffff, self.width, self.height, 0xffffffff, 0, self.height, 0xffffffff, 0)
       @starscroll.draw(0,@skrolIndex,1)
       @current_balance.draw(@player.balance,0,0,2)
@@ -108,6 +111,7 @@ class GameWindow <Gosu::Window
       unless @bulletrain.empty?
         @bulletrain.each do |e|
           e.draw
+
           if e.y <= 0
             @bulletrain = @bulletrain.drop(1)
           end
@@ -115,7 +119,7 @@ class GameWindow <Gosu::Window
           @badguy.each do |o|
             # if o.limits?((e.x.round)..(e.x.round+e.width), (e.y.round)..(e.y.round+e.height))
             #   o.hit e.pow,10
-            #   @damageFire.each do |s|; s.draw(e.x-s.width/2+e.width/2, e.y-s.height, 4); end
+            #
             #   @bulletrain = @bulletrain.drop(1)
             # end
           end
@@ -140,14 +144,14 @@ class GameWindow <Gosu::Window
 
 
 
-  #   def button_down(id )
-  #     if id == Gosu::MsWheelUp
-  #       @player.increaseShootSpeed
-  #     end
-  #     if id == Gosu::MsWheelDown
-  #       @player.decreaseShootSpeed
-  #     end
-  #   end
+  def button_down(id )
+    if id == Gosu::MsWheelUp
+      @player.increaseShootSpeed
+    end
+    if id == Gosu::MsWheelDown
+      @player.decreaseShootSpeed
+    end
+  end
 end
 
 
@@ -170,11 +174,12 @@ class Player
     @shootSpeed = 8
     @balance = 1000
     @energy = 1000
+
   end
   # def damaged_by(enemy) ;enemy.reject! {|e| Gosu::distance(@x, @y, e.x, e.y) < 35}; end;
   def hurt_by(array)
     array.reject! do |bullet|
-      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow ;@dmg.draw(50, 50,0);end
+      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow ;end
       Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
     end
   end
@@ -187,6 +192,7 @@ class Player
   def move_up ;                self.warp(@x, @y-10); end
   def move_down;                self.warp(@x, @y+10); end
   def draw;                     @image.draw_rot(@x, @y, 1, @angle); end
+  def drawHit;                  @dmg.draw(@x, @y-10,2);end
   def shootSpeed ;           @shootSpeed ; end
   def increaseShootSpeed; if@shootSpeed >1; @shootSpeed-=1; end; end
   def decreaseShootSpeed; if @shootSpeed < 20 ; @shootSpeed+=1 ; end ; end
@@ -195,7 +201,7 @@ class Player
   def width ;                @image.width;end
 end
 class Bullet
-  attr_reader :x, :y, :pow,:axx ,:axy
+  attr_reader :x, :y, :pow
   attr_accessor :recoil
   def initialize(window ,x, y)
     @bullet = Gosu::Image.new(window, "img/JellyGreen.png", false)
@@ -216,6 +222,7 @@ class BulletM <Bullet
     super
     @bullet = Gosu::Image.new(window, "img/JellyBlueM.png", false)
     @pow = 8
+    @recoil = 40
   end
   def draw ;                    @bullet.draw @x,@y-=15,0 ;end
 end
@@ -231,6 +238,7 @@ class FighterBullet1<Bullet
 end
 
 class AssaultBullet1<Bullet
+
   def initialize(window ,x, y)
     super
     @bullet = Gosu::Image.new(window,"img/AssaultBullet1.png")
@@ -280,21 +288,18 @@ class Enemy
   end
   def hurt_by(array)
     array.reject! do |bullet|
-      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow;@y-= bullet.recoil end
-      Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+      # if bullet.x+bullet.width/2 >= self.x && bullet.x+bullet.width/2 <= self.x+ self.width then @energy -= bullet.pow; @y-= bullet.recoil end
+      if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height - bullet.y)< 40 ; self.hit(bullet.pow,bullet.recoil);end
+
+      # Gosu::distance(@x, @y , bullet.x, bullet.y) < 10
     end
   end
-  def damaged_by(enemy) ;enemy.reject! {|e| Gosu::distance(@x, @y, e.x, e.y) < 25}; ; end;
-  def draw(x, y);     @image.draw(x, y,0); end
-  def move (x,y);           @x= x; @y = y;end			#@y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
-  def energy ;               @energy; end
-  def hit (pow, recoil)
-    @energy -= pow
-
-  end
-  def height
-    @image.height
-  end
+  def draw(x, y);                      @image.draw(x, y,0); end
+  def move (x,y);                      @x= x; @y = y;end			#@y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
+  def energy ;                         @energy; end
+  def hit (pow, recoil) ;              @energy -= pow ;end
+  def height;                          @image.height; end
+  def width;                           @image.width; end
 end
 
 class Fighter <Enemy
