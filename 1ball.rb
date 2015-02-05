@@ -36,7 +36,6 @@ class GameWindow <Gosu::Window
     @current_energy = Gosu::Font.new(self, "font/simple.TTF",  70)
     @background_image = Gosu::Image.new(self, "img/bg_starVII.png", false)
     @starscroll = Gosu::Image.new(self,"img/StarFar.png", false)
-    @dmg = Gosu::Image.new(self,"img/dmg.png", false)
     # @starscrollsp = Gosu::Image.new(self,"img/Starclose.png", false)
     @startBackground = Gosu::Image.new(self, "img/Title.png", false)
     @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
@@ -61,8 +60,6 @@ class GameWindow <Gosu::Window
     @frame
   end
 
-
-
   def update
     self.up_frame
     if @gameState == 0                                                 # 0 = Start menu
@@ -73,13 +70,13 @@ class GameWindow <Gosu::Window
       @player.warp(mouse_x, mouse_y)
       @badguy.each do |x|
         x.move(x.x, x.y)
+        x.hurt_by(@bulletrain)
         if@frame % 10 == 0
           @bulletfall<<x.shoot(self)
         end
       end
       @player.hurt_by(@bulletfall)
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed ==0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; @pew.play; end; end
-      if button_down? Gosu::MsRight ;@bulletrain<< BulletM.new(self ,@player.x-32, (@player.y-20)) ;@player.balance_down 10 ;end
       @badguy.reject! {|x| x.energy <= 0 || x.y>=self.height}
       @bulletfall.reject! {|x| (x.y>=self.height)}
     elsif @gameState == 2                                         # 2 = Game in pause
@@ -97,6 +94,7 @@ class GameWindow <Gosu::Window
       @start_text1.draw width/2 - @start_text1.width/2, height- 170, 10
       @start_text2.draw width/2 - @start_text2.width/2, height- 100, 10
     elsif @gameState == 1                                              # 1 = Game in progress
+      if button_down? Gosu::MsRight ;if @frame % @player.shootSpeed ==0;@bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
       @background_image.draw_as_quad(0, 0, 0xffffffff, self.width, 0, 0xffffffff, self.width, self.height, 0xffffffff, 0, self.height, 0xffffffff, 0)
       @starscroll.draw(0,@skrolIndex,1)
       @current_balance.draw(@player.balance,0,0,2)
@@ -165,6 +163,7 @@ class Player
   attr_accessor :x, :y, :energy
   attr_reader :balance ,:axx ,:axy
   def initialize (window)
+    @dmg = Gosu::Image.new(window,"img/dmg.png", false)
     @image = Gosu::Image.new(window, "img/StarshipHbox.png" ,false)
     @axy = @axx = @x = @y = @vel_x = @vel_y = @angle =0.0
     @score = 0
@@ -175,9 +174,8 @@ class Player
   # def damaged_by(enemy) ;enemy.reject! {|e| Gosu::distance(@x, @y, e.x, e.y) < 35}; end;
   def hurt_by(array)
     array.reject! do |bullet|
-      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 5 then @energy -= bullet.pow end
-      Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 5
-
+      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow ;@dmg.draw(50, 50,0);end
+      Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
     end
   end
   def warp (x, y)
@@ -198,9 +196,11 @@ class Player
 end
 class Bullet
   attr_reader :x, :y, :pow,:axx ,:axy
+  attr_accessor :recoil
   def initialize(window ,x, y)
     @bullet = Gosu::Image.new(window, "img/JellyGreen.png", false)
     @pow = 2
+    @recoil = 20
     @x ,@y = x,y
     @axx = @x + @bullet.width/2
     @axy = @y + @bullet.height/2
@@ -268,6 +268,7 @@ class CruiserBullet2<Bullet
 end
 class Enemy
   attr_reader :x, :y
+  attr_accessor :energy
   def initialize(window, x, y)
     @x = x
     @y = y
@@ -277,13 +278,19 @@ class Enemy
     @shootSpeed = 10
     @image = Gosu::Image.new(window,"img/Enemy1.png")
   end
+  def hurt_by(array)
+    array.reject! do |bullet|
+      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow;@y-= bullet.recoil end
+      Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+    end
+  end
   def damaged_by(enemy) ;enemy.reject! {|e| Gosu::distance(@x, @y, e.x, e.y) < 25}; ; end;
   def draw(x, y);     @image.draw(x, y,0); end
   def move (x,y);           @x= x; @y = y;end			#@y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
   def energy ;               @energy; end
   def hit (pow, recoil)
     @energy -= pow
-    @y-= recoil
+
   end
   def height
     @image.height
