@@ -10,11 +10,17 @@ require 'rubygems'
 ##########################   MAIN GAME LOOP   ##################################
 ################################################################################
 
+module Tiles
+  first = 0
+  second = 1
+
+end
+
 
 class GameWindow <Gosu::Window
 
   def initialize
-    super(1620, 1024, false)
+    super(1620, 1024, true)
 
     #############VarInit
     @day =0
@@ -116,6 +122,13 @@ class GameWindow <Gosu::Window
           @badguy.each do |x|
             x.draw(x.x , x.y)
           end
+        end
+        if @badguy
+          @badguy.each do |x|
+            x.damaged.each do |d|
+              @damageFire[(@totaltime % 8)].draw(x.x + d, x.y, 0)
+            end
+          end          
         end
         unless @bulletrain.empty?
           @bulletrain.each do |e|
@@ -268,6 +281,7 @@ class GameWindow <Gosu::Window
   class Enemy
     attr_reader :x, :y
     attr_accessor :energy
+    attr_accessor :damaged
     attr_accessor :shootSpeed
     def initialize(window, x, y)
       @x = x
@@ -277,20 +291,16 @@ class GameWindow <Gosu::Window
       @energy = @max_energy
       @shootSpeed = 10
       @image = Gosu::Image.new(window,"img/Enemy1.png")
+      @damaged = Array.new
     end
 
-    # def hurt_by(array)
-    #   array.reject! do |bullet|
-    #     if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow ;end
-    #     Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
-    #   end
-    # end
 
     def hurt_by(array)
       array.reject! do |bullet|
 #        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - bullet.y) >= self.y
           if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
          self.hit(bullet.pow,bullet.recoil);
+         @damaged.push (bullet.x - self.x)
          true;
      end
       end
