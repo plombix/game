@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg45540"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   inkscape:export-filename="/home/odin/Proj/Gosu/Ball1/img/main.png"
+   inkscape:export-xdpi="21"
+   inkscape:export-ydpi="21"
+   sodipodi:docname="New document 12">
+  <defs
+     id="defs45542" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.64"
+     inkscape:cx="318.25994"
+     inkscape:cy="297.90297"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata45545">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:11.39048862;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1"
+       d="m 144.44387,215.3368 c 0,0 10.68009,-48.72882 39.00574,-44.02305 28.32563,4.70577 25.38271,23.46833 32.79474,46.44044 7.41201,22.97209 -8.08627,537.72071 5.63135,534.87808 13.71763,-2.84265 30.37282,-537.22287 38.21591,-559.86503 7.84309,-22.64216 2.99678,-53.44311 32.04709,-50.69127 29.05032,2.75186 26.11543,26.53374 35.86738,49.24903 9.75193,22.71527 -21.87438,557.4662 -5.95657,566.50442 15.91783,9.03823 36.21082,-489.73453 42.44249,-512.57022 6.23167,-22.83571 0.47391,-45.86141 26.78895,-48.88777 26.31505,-3.02636 24.97399,27.32844 34.0566,51.37362 9.08263,24.04518 -11.48669,516.24378 9.53537,518.5425 21.02206,2.29873 32.9499,-416.06442 39.7075,-440.35391 6.75761,-24.28947 -1.72623,-49.29422 31.21201,-48.33487 32.93823,0.95936 30.27717,69.43545 30.27717,69.43545 l 18.89046,953.89278 c 0,0 -421.95635,364.1089 -400.35429,-7.1333 L 31.028976,1001.9013 c 0,0 -55.460853,-155.93001 -68.89257,-317.68859 -1.856869,-22.36232 -0.800406,-40.54749 23.570288,-56.81119 24.370694,-16.26368 45.620341,24.30442 45.620341,24.30442 l 84.021695,259.45945 12.20765,-257.30449 2.94963,-195.04648 z"
+       id="rect45548"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="czszszszszszszccccszccccc"
+       inkscape:export-filename="/home/odin/Proj/Gosu/Ball1/img/main.png"
+       inkscape:export-xdpi="21"
+       inkscape:export-ydpi="21" />
+  </g>
+</svg>
