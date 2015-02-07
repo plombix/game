@@ -115,22 +115,22 @@ class GameWindow <Gosu::Window
       if button_down? Gosu::KbReturn ;@gameState = 5;end
     elsif @gameState == 5
       if @total_balance > 0
-        if button_down? Gosu::MsLeft
-          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
+        if button_down? Gosu::MsLef
+          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50 && button_up(Gosu::MsLeft)
             @player.shield += 50
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160 && button_up(Gosu::MsLeft)
             @player.ally += 1
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270 && button_up(Gosu::MsLeft)
             @player.loan += 1
           end
         end
       elsif @total_balance < 0
         if button_down? Gosu::MsLeft
-          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
-            @player.shield += 50
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
+          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50 &&
+              @player.shield += 50
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160 && button_up(Gosu::MsLeft)
             @player.ally += 1
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270 && button_up(Gosu::MsLeft)
             @player.loan += 1
           end
         end
