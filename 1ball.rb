@@ -169,23 +169,23 @@ class GameWindow <Gosu::Window
         end
       end
       if @badguy
-          @badguy.each do |x|
-            x.damaged.each do |d|
-              if (d < -x.width / 2)
-                d = -x.width / 2
-              elsif d > x.width / 2
-                d = x.width / 2
-              end
-              @damageFire[(@totaltime % 8)].draw(x.x + d, x.y, 0)
+        @badguy.each do |x|
+          x.damaged.each do |d|
+            if (d < -x.width / 2)
+              d = -x.width / 2
+            elsif d > x.width / 2
+              d = x.width / 2
             end
-          end          
+            @damageFire[(@totaltime % 8)].draw(x.x + d, x.y, 0)
+          end
         end
-        if (@arc > 0)
-          @arc -= 1;
-          puts @arc;
-          # binding.pry
-          @dmg2.draw(@player.x - 10, @player.y - (40 + 10), 2);
-        end
+      end
+      if (@arc > 0)
+        @arc -= 1;
+        puts @arc;
+        # binding.pry
+        @dmg2.draw(@player.x - 50, @player.y - (40 + 10), 2);
+      end
       unless @bulletrain.empty?
         @bulletrain.each do |e|
           e.draw
@@ -260,17 +260,17 @@ class Player
     @ally = 0
   end
 
-    def hurt_by(array)
-      @a = false
-      array.reject! do |bullet|
-        if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
-          @energy -= bullet.pow ;
-          @a = true;
-        end
-        Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+  def hurt_by(array)
+    @a = false
+    array.reject! do |bullet|
+      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+        @energy -= bullet.pow ;
+        @a = true;
       end
-      return @a;
+      Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
     end
+    return @a;
+  end
   def warp (x, y)
     @x = x
     @y = y
@@ -366,7 +366,7 @@ class Enemy
   attr_reader :x, :y
   attr_accessor :energy
   attr_accessor :shootSpeed
-    attr_accessor :damaged
+  attr_accessor :damaged
   def initialize(window, x, y)
     @x = x
     @y = y
@@ -375,18 +375,18 @@ class Enemy
     @energy = @max_energy
     @shootSpeed = 10
     @image = Gosu::Image.new(window,"img/Enemy1.png")
-      @damaged = Array.new
+    @damaged = Array.new
   end
-    def hurt_by(array)
-      array.reject! do |bullet|
-#        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - bullet.y) >= self.y
-          if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
-         self.hit(bullet.pow,bullet.recoil);
-         @damaged.push (bullet.x - self.x)
-         true;
-     end
+  def hurt_by(array)
+    array.reject! do |bullet|
+      #        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - bullet.y) >= self.y
+      if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
+        self.hit(bullet.pow,bullet.recoil);
+        @damaged.push (bullet.x - self.x)
+        true;
+      end
+    end
   end
-end
   def draw(x, y);                      @image.draw(x, y,0); end
   def move (x,y);                      @x= x; @y = y;end      #@y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
   def energy ;                         @energy; end
