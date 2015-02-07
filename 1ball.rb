@@ -192,7 +192,7 @@ class GameWindow <Gosu::Window
     def width ;                @image.width;end
   end
   class Bullet
-    attr_accessor :x, :y, :pow
+    attr_reader :x, :y, :pow
     attr_accessor :recoil
     def initialize(window ,x, y)
       @bullet = Gosu::Image.new(window, "img/JellyGreen.png", false)
@@ -287,13 +287,12 @@ class GameWindow <Gosu::Window
     # end
 
     def hurt_by(array)
-      array.each do |bullet|
-        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - (bullet.y + bullet.height/2))< 10
+      array.reject! do |bullet|
+#        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - bullet.y) >= self.y
+          if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
          self.hit(bullet.pow,bullet.recoil);
-         if (bullet.y >= self.y)
-           bullet.y = -8;
-         end
-        end
+         true;
+     end
       end
     end
     def draw(x, y);                      @image.draw(x, y,0); end
