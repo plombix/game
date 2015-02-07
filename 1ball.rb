@@ -77,15 +77,9 @@ class GameWindow <Gosu::Window
       if button_down? Gosu::KbEscape ;@gameState = 2 ;self.frameReset ;end
       @player.warp(mouse_x, mouse_y)
       if (@player.hurt_by(@bulletfall) == true)
-        @arc = 100;
+        @arc = 30;
         # binding.pry
-
        # @player.drawHit(@player.x, @player.y);
-      end
-      if (@arc > 0)
-        @arc -= 1;
-        puts @arc;
-        @dmg2.draw(@player.x, @player.y, 2);
       end
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
       if button_down? Gosu::MsRight; if @frame % @player.shootSpeed == 0; @bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
@@ -146,6 +140,12 @@ class GameWindow <Gosu::Window
               @damageFire[(@totaltime % 8)].draw(x.x + d, x.y, 0)
             end
           end          
+        end
+        if (@arc > 0)
+          @arc -= 1;
+          puts @arc;
+          # binding.pry
+          @dmg2.draw(@player.x - 10, @player.y - (40 + 10), 2);
         end
         unless @bulletrain.empty?
           @bulletrain.each do |e|
