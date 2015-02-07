@@ -110,7 +110,7 @@ class GameWindow <Gosu::Window
       if button_down? Gosu::KbReturn ;@gameState = 5;end
     end
     if @gameState == 5
-      puts @gameState
+
     end
   end
 
@@ -149,13 +149,15 @@ class GameWindow <Gosu::Window
       @background_image.draw_as_quad(0, 0, 0xeeeeeee, self.width, 0, 0xeeeeeee, self.width, self.height, 0xeeeeeee, 0, self.height, 0xeeeeeee, 0)
       @continue.draw width/2- @continue.width/2 , height/2- @continue.height/2, 1
       @quit.draw width/2- @quit.width/2 , height/2- @quit.height/2 + @quit.height, 1
-    elsif @gameState == 4
+    end
+    if @gameState == 4
       @preshop.draw(0,0,0)
       @dayEnd.draw(           "_-{]  Bataille _-| #{@day} |-_ est finie !",50,20,1 )
       @balance.draw(          "_-{]  Ta reserve de balle est :    #{@player.balance}",50, 65,1)
       @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
       @continue.draw(50,600,1)
-    elsif @gamestate == 5
+    end
+    if @gamestate == 5
       puts @gameState
       @shop.draw(0,0,0)
     end
@@ -202,7 +204,7 @@ class Player
   def move_up ;                self.warp(@x, @y-10); end
   def move_down;                self.warp(@x, @y+10); end
   def draw;                     @image.draw_rot(@x, @y, 1, @angle); end
-  def drawHit;                  @dmg.draw(@x, @y-10,2);end
+  def drawHit(x ,y);                  @dmg.draw(x, y);end
   def shootSpeed ;           @shootSpeed ; end
   def increaseShootSpeed; if@shootSpeed >2; @shootSpeed-=1; end; end
   def decreaseShootSpeed; if @shootSpeed < 20 ; @shootSpeed+=1 ; end ; end
@@ -328,12 +330,12 @@ class Assault <Enemy
     @max_energy = 15
     @moveSpeed = 1
     @energy = @max_energy
-    @shootSpeed = 5
+    @shootSpeed = 8
     @image = Gosu::Image.new(window,"img/Enemy2.png")
   end
   # def move (x,y);           @x= x; @y = y + @moveSpeed; end
   def move (x,y)
-    @x + ((50)- @image.width) + (Math.sin(Gosu::milliseconds / 133.7) * ((50) - @image.width))
+    @x =  x + (Math.sin(Gosu::milliseconds / 133.7) * ((50) - @image.width))
     @y =  y += 1
   end
   def shoot(window)
