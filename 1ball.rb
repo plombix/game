@@ -1,6 +1,5 @@
 require 'gosu'
 require 'pry'
-require 'pry-debugger'
 require 'rubygems'
 
 
@@ -28,6 +27,7 @@ class GameWindow <Gosu::Window
     @frame = 0
     @totaltime = 0
     @skrolIndex = 0
+    @total_balance = 0
     @gameState = 0          # 0 = Start menu  1 = Game in progress  2 = Game in pause  3 = Game in end of day 4 = Game in mana
     #############Sounds
     @wait_a_min = Gosu::Sample.new(self, "sound/wait-a-minute.wav")
@@ -38,11 +38,13 @@ class GameWindow <Gosu::Window
     @start_text2 = Gosu::Image.from_text(self,"_-{]    Escape pour Quitter    [}-_", "font/simple.TTF",  55)
     @continue = Gosu::Image.from_text(self,"_-{]  Entree pour Continuer  [}-_", "font/simple.TTF",  55)
     @quit= Gosu::Image.from_text(self,"_-{]  P pour Quitter  [}-_", "font/simple.TTF",  55)
-    @dayEnd = Gosu::Image.from_text(self,"_-{]  Day #{@day} is over!! [}-_", "font/simple.TTF",  55)
     # @count2 = Gosu::Image.from_text(self,"_-{]  2  [}-_", "font/simple.TTF",  55)
     # @count1 = Gosu::Image.from_text(self,"_-{]  1  [}-_", "font/simple.TTF",  55)
     # @count0 = Gosu::Image.from_text(self,"_-{]  GO!  [}-_", "font/simple.TTF",  55)
     #############Images/Anims
+    @dayEnd = Gosu::Font.new(self, "font/simple.TTF",  45)
+    @balance = Gosu::Font.new(self, "font/simple.TTF",  45)
+    @total_balance = Gosu::Font.new(self, "font/simple.TTF",  45)
     @current_balance = Gosu::Font.new(self, "font/simple.TTF",  70)
     @current_energy = Gosu::Font.new(self, "font/simple.TTF",  70)
     @background_image = Gosu::Image.new(self, "img/bg_starVII.png", false)
@@ -90,14 +92,17 @@ class GameWindow <Gosu::Window
         elsif @phase == 3
           @badguy << Fighter.new(self ,self.width/6,@seed[0] +70)<< Fighter.new(self , (width/6)*2,@seed[1] +70)<< Fighter.new(self , (width/6)*3,@seed[2] +70)<< Fighter.new(self , (width/6)*4,@seed[3] +70)<< Fighter.new(self , (width/6)*5,@seed[4] +70)<< Assault.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Cruiser.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Assault.new(self , (width/6)*5,@seed[4])
         elsif @phase == 4
-          @gameState == 3
+          @gameState = 3
+          puts "#{@gameState}"
         end
       end
+      puts "#{@phase}"
     elsif @gameState == 2                                         # 2 = Game in pause
       if button_down? Gosu::KbReturn ;sleep(0.5) ;@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
     elsif  @gameState == 3
       if @bulletrain.empty? && @bulletfall.empty?
         @day+=1
+        @total_balance += @current_balance/100
       end
     end
 
@@ -107,6 +112,7 @@ class GameWindow <Gosu::Window
         @start_text1.draw width/2 - @start_text1.width/2, height- 170, 10
         @start_text2.draw width/2 - @start_text2.width/2, height- 100, 10
       elsif @gameState == 1                                              # 1 = Game in progress
+
         @background_image.draw_as_quad(0, 0, 0xffffffff, self.width, 0, 0xffffffff, self.width, self.height, 0xffffffff, 0, self.height, 0xffffffff, 0)
         @starscroll.draw(0,@skrolIndex,1)
         @current_balance.draw(@player.balance,0,0,2)
@@ -134,11 +140,17 @@ class GameWindow <Gosu::Window
         @background_image.draw_as_quad(0, 0, 0xeeeeeee, self.width, 0, 0xeeeeeee, self.width, self.height, 0xeeeeeee, 0, self.height, 0xeeeeeee, 0)
         @continue.draw width/2- @continue.width/2 , height/2- @continue.height/2, 1
         @quit.draw width/2- @quit.width/2 , height/2- @quit.height/2 + @quit.height, 1
-      elsif @gameState ==3
-        @dayEnd.draw(width/2 - @dayEnd.whidt/2, height/2 - @dayEnd.height/2,1)
+      elsif @gameState == 3
+        # @dayEnd.draw(self.width/2 - @dayEnd.width/2, self.height/2 - @dayEnd.height/2,1)
+        @dayEnd.draw(           "_-{]  Bataille _-| #{@day} |-_ est finie !",50,20,1 )
+        @balance.draw(          "_-{]  Ta reserve de balle est :    #{@current_balance}",50, 65,1)
+        @total_balance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
       end
     end
-
+    # @current_balance.draw(@player.balance,0,0,2)
+    # @dayEnd = Gosu::Image.from_text(self,"_-{]  Bataille _-| #{@day} |-_ est finie ! [}-_", "font/simple.TTF",  55)
+    # @balance = Gosu::Image.from_text(self,"_-{]  Ta reserve de balle est : #{@current_balance} [}-_", "font/simple.TTF",  55)
+    # @total_balance = Gosu::Image.from_text(self,"_-{]  Ton solde est : #{@total_balance} [}-_", "font/simple.TTF",  55)
     ######################################## controlls whith no effects in phase or state gestion
 
     def button_down(id )
@@ -286,7 +298,7 @@ class GameWindow <Gosu::Window
       end
     end
     def draw(x, y);                      @image.draw(x, y,0); end
-    def move (x,y);                      @x= x; @y = y;end			#@y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
+    def move (x,y);                      @x= x; @y = y;end      #@y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
     def energy ;                         @energy; end
     def hit (pow, recoil) ;              @energy -= pow ;end
     def height;                          @image.height; end
