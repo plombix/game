@@ -13,7 +13,7 @@ require 'rubygems'
 class GameWindow <Gosu::Window
 
   def initialize
-    super(1620, 1024, true)
+    super(1620, 1024, false)
 
     #############VarInit
     @day =0
