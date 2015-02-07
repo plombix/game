@@ -69,7 +69,7 @@ class GameWindow <Gosu::Window
   def up_frame ;@frame +=1 ;@skrolIndex +=10 ;if @skrolIndex >= 0 then @skrolIndex = -@starscroll.height+1024 end ;end
   def frameReset; @frame = 0; end
   def frame; @frame; end
-
+  def button_up? (id); if button_up(id) ; true;end;end
   def update
     self.up_frame
     if @gameState == 0                                                 # 0 = Start menu
@@ -119,28 +119,31 @@ class GameWindow <Gosu::Window
       if button_down? Gosu::KbReturn ;@gameState = 5;end
     elsif @gameState == 5
       if @total_balance > 0
-        if button_down? Gosu::MsLef
-          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50 && button_up(Gosu::MsLeft)
+        if button_down? Gosu::MsLeft
+          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
             @player.shield += 50
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160 && button_up(Gosu::MsLeft)
+            sleep(0.5)
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
             @player.ally += 1
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270 && button_up(Gosu::MsLeft)
+            sleep(0.5)
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
             @player.loan += 1
+            sleep(0.5)
           end
         end
       elsif @total_balance < 0
         if button_down? Gosu::MsLeft
-          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50 &&
-              @player.shield += 50
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160 && button_up(Gosu::MsLeft)
+          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
+            @player.shield += 50
+            sleep(0.5)
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
             @player.ally += 1
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270 && button_up(Gosu::MsLeft)
+            sleep(0.5)
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
             @player.loan += 1
+            sleep(0.5)
           end
         end
-        puts "shield  #{@player.shield}"
-        puts "ally  #{@player.ally}"
-        puts "loan   #{@player.loan}"
       end
       if button_down? Gosu::KbReturn
         @day +=1
@@ -225,8 +228,14 @@ class GameWindow <Gosu::Window
         @bankMessage.draw("Les prochains jours riquent d'etre DURS", 1000,655,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Nous pensons pouvoir vous AIDER " , 1000,710,1,1,1,Gosu::Color::BLACK)
         @iconShield.draw(50,50,2)
+        puts @iconShield.width
+        puts @iconShield.height
         @iconInvest.draw(50,160,2)
+        puts @iconInvest.width
+        puts @iconInvest.height
         @iconLoan.draw(50,270,2)
+        puts @iconLoan.width
+        puts @iconLoan.height
       end
     end
   end
