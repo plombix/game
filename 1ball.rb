@@ -339,7 +339,8 @@ class GameWindow <Gosu::Window
       CruiserBullet2.new(window,@x+@image.width/2, @y+@image.height)
     end
   end
+end
 
-  ######################################    Init of Window And Gosu Magicks
-  window = GameWindow.new
-  window.show
+######################################    Init of Window And Gosu Magicks
+window = GameWindow.new
+window.show
