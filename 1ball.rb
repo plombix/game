@@ -13,7 +13,7 @@ require 'rubygems'
 class GameWindow <Gosu::Window
 
   def initialize
-    super(1620, 1024, true)
+    super(1620, 1024, false)
 
     #############VarInit
     @day =0
@@ -58,6 +58,7 @@ class GameWindow <Gosu::Window
     @iconShield = Gosu::Image.new(self, "img/Ishield.png",false)
     @iconInvest = Gosu::Image.new(self, "img/IIally.png",false)
     @iconLoan = Gosu::Image.new(self, "img/Iloan.png",false)
+    @pointer = Gosu::Image.new(self, "img/pointer.png",false)
     #############Entity
     @player = Player.new(self)
     @badguy<< Fighter.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Fighter.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Fighter.new(self , (width/6)*5,@seed[4])
@@ -112,6 +113,36 @@ class GameWindow <Gosu::Window
       @gameState = 4
     elsif @gameState == 4
       if button_down? Gosu::KbReturn ;@gameState = 5;end
+    elsif @gameState == 5
+      if @total_balance > 0
+        if button_down? Gosu::MsLeft
+          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
+            @player.shield += 50
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
+            @player.ally += 1
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
+            @player.loan += 1
+          end
+        end
+      elsif @total_balance < 0
+        if button_down? Gosu::MsLeft
+          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
+            @player.shield += 50
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
+            @player.ally += 1
+          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
+            @player.loan += 1
+          end
+        end
+        puts "shield  #{@player.shield}"
+        puts "ally  #{@player.ally}"
+        puts "loan   #{@player.loan}"
+      end
+      if button_down? Gosu::KbReturn
+        @day +=1
+        @player.balance == 1000 - @player.loan * 200
+        @gameState == 2
+      end
     end
   end
 
@@ -157,22 +188,23 @@ class GameWindow <Gosu::Window
       @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
       @continue.draw(50,600,1)
     elsif @gameState == 5
-      puts @gameState
+      @pointer.draw(mouse_x, mouse_y,3)
+
       @shop.draw(0,0,0)
       if @total_balance > 0
         @bankMessage.draw("Hum ... Vous avez des DISPONIBILITES." , 1000,600,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Peut etre pouvons nous vous PROPOSER" , 1000,650,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("des AMELIORATIONS " , 1000,710,1,1,1,Gosu::Color::BLACK)
         @iconShield.draw(50,50,2)
-        @iconInvest.draw(50,150,2)
-        @iconLoan.draw(50,300,2)
+        @iconInvest.draw(50,160,2)
+        @iconLoan.draw(50,270,2)
       elsif @total_balance < 0
         @bankMessage.draw("Hum ... Vous etes a DECOUVERT." , 1000,600,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Les prochains jours riquent d'etre DURS", 1000,655,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Nous pensons pouvoir vous AIDER " , 1000,710,1,1,1,Gosu::Color::BLACK)
         @iconShield.draw(50,50,2)
-        @iconInvest.draw(50,150,2)
-        @iconLoan.draw(50,300,2)
+        @iconInvest.draw(50,160,2)
+        @iconLoan.draw(50,270,2)
       end
     end
   end
@@ -191,7 +223,7 @@ end
 
 
 class Player
-  attr_accessor :x, :y, :energy
+  attr_accessor :x, :y, :energy , :ally , :loan,:shield
   attr_reader :balance ,:axx ,:axy
   def initialize (window)
     @dmg = Gosu::Image.new(window,"img/dmg.png", false)
@@ -201,6 +233,9 @@ class Player
     @shootSpeed = 8
     @balance = 1000
     @energy = 1000
+    @shield = 0
+    @loan = 0
+    @ally = 0
   end
 
   def hurt_by(array)
