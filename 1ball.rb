@@ -1,6 +1,6 @@
 require 'gosu'
 require 'pry'
-require 'pry-debugger'
+#require 'pry-debugger'
 require 'rubygems'
 
 
@@ -70,7 +70,7 @@ class GameWindow <Gosu::Window
       @player.warp(mouse_x, mouse_y)
       @player.hurt_by(@bulletfall)
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
-      if button_down? Gosu::MsRight ;if @frame % @player.shootSpeed ==0;@bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
+      if button_down? Gosu::MsRight; if @frame % @player.shootSpeed == 0; @bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
       @badguy.reject! {|x| x.energy <= 0 || x.y>=self.height}
       @bulletfall.reject! {|x| (x.y>=self.height)}
       @badguy.each do |x|
@@ -192,7 +192,7 @@ class GameWindow <Gosu::Window
     def width ;                @image.width;end
   end
   class Bullet
-    attr_reader :x, :y, :pow
+    attr_accessor :x, :y, :pow
     attr_accessor :recoil
     def initialize(window ,x, y)
       @bullet = Gosu::Image.new(window, "img/JellyGreen.png", false)
@@ -278,10 +278,21 @@ class GameWindow <Gosu::Window
       @shootSpeed = 10
       @image = Gosu::Image.new(window,"img/Enemy1.png")
     end
+
+    # def hurt_by(array)
+    #   array.reject! do |bullet|
+    #     if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow ;end
+    #     Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+    #   end
+    # end
+
     def hurt_by(array)
-      array.reject! do |bullet|
-        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - bullet.y)< 10 ; self.hit(bullet.pow,bullet.recoil);
-          true
+      array.each do |bullet|
+        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - (bullet.y + bullet.height/2))< 10
+         self.hit(bullet.pow,bullet.recoil);
+         if (bullet.y >= self.y)
+           bullet.y = -8;
+         end
         end
       end
     end
@@ -340,7 +351,6 @@ class GameWindow <Gosu::Window
     end
   end
 end
-
 ######################################    Init of Window And Gosu Magicks
 window = GameWindow.new
 window.show
