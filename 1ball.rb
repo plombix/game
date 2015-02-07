@@ -26,6 +26,7 @@ class GameWindow <Gosu::Window
     @phase =  0
     @frame = 0
     @totaltime = 0
+    @arc = 0
     @skrolIndex = 0
     @total_balance = 0
     @gameState = 0          # 0 = Start menu  1 = Game in progress  2 = Game in pause  3 = Game in end of day 4 = Game in mana
@@ -59,6 +60,7 @@ class GameWindow <Gosu::Window
     @iconInvest = Gosu::Image.new(self, "img/IIally.png",false)
     @iconLoan = Gosu::Image.new(self, "img/Iloan.png",false)
     @pointer = Gosu::Image.new(self, "img/pointer.png",false)
+    @dmg2 = Gosu::Image.new(self,"img/dmg.png", false)
     #############Entity
     @player = Player.new(self)
     @badguy<< Fighter.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Fighter.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Fighter.new(self , (width/6)*5,@seed[4])
@@ -79,7 +81,9 @@ class GameWindow <Gosu::Window
       @totaltime += 1
       if button_down? Gosu::KbEscape ;@gameState = 2 ;self.frameReset ;end
       @player.warp(mouse_x, mouse_y)
-      @player.hurt_by(@bulletfall)
+      if (@player.hurt_by(@bulletfall) == true)
+        @arc = 30;
+      end
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
       if button_down? Gosu::MsRight; if @frame % @player.shootSpeed == 0; @bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
       @badguy.reject! {|x| x.energy <= 0 || x.y>=self.height}
@@ -164,6 +168,24 @@ class GameWindow <Gosu::Window
           x.draw(x.x , x.y)
         end
       end
+      if @badguy
+          @badguy.each do |x|
+            x.damaged.each do |d|
+              if (d < -x.width / 2)
+                d = -x.width / 2
+              elsif d > x.width / 2
+                d = x.width / 2
+              end
+              @damageFire[(@totaltime % 8)].draw(x.x + d, x.y, 0)
+            end
+          end          
+        end
+        if (@arc > 0)
+          @arc -= 1;
+          puts @arc;
+          # binding.pry
+          @dmg2.draw(@player.x - 10, @player.y - (40 + 10), 2);
+        end
       unless @bulletrain.empty?
         @bulletrain.each do |e|
           e.draw
@@ -238,12 +260,17 @@ class Player
     @ally = 0
   end
 
-  def hurt_by(array)
-    array.reject! do |bullet|
-      if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow ;end
-      Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+    def hurt_by(array)
+      @a = false
+      array.reject! do |bullet|
+        if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+          @energy -= bullet.pow ;
+          @a = true;
+        end
+        Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+      end
+      return @a;
     end
-  end
   def warp (x, y)
     @x = x
     @y = y
@@ -339,6 +366,7 @@ class Enemy
   attr_reader :x, :y
   attr_accessor :energy
   attr_accessor :shootSpeed
+    attr_accessor :damaged
   def initialize(window, x, y)
     @x = x
     @y = y
@@ -347,15 +375,18 @@ class Enemy
     @energy = @max_energy
     @shootSpeed = 10
     @image = Gosu::Image.new(window,"img/Enemy1.png")
+      @damaged = Array.new
   end
-  def hurt_by(array)
-    array.reject! do |bullet|
-      if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
-        self.hit(bullet.pow,bullet.recoil);
-        true;
-      end
-    end
+    def hurt_by(array)
+      array.reject! do |bullet|
+#        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - bullet.y) >= self.y
+          if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
+         self.hit(bullet.pow,bullet.recoil);
+         @damaged.push (bullet.x - self.x)
+         true;
+     end
   end
+end
   def draw(x, y);                      @image.draw(x, y,0); end
   def move (x,y);                      @x= x; @y = y;end      #@y  += (Math.sin(Gosu::milliseconds / 133.7))+@moveSpeed;end
   def energy ;                         @energy; end
