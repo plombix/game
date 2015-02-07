@@ -44,13 +44,15 @@ class GameWindow <Gosu::Window
     #############Images/Anims
     @dayEnd = Gosu::Font.new(self, "font/simple.TTF",  45)
     @balance = Gosu::Font.new(self, "font/simple.TTF",  45)
-    @total_balance = Gosu::Font.new(self, "font/simple.TTF",  45)
+    @totalBalance = Gosu::Font.new(self, "font/simple.TTF",  45)
     @current_balance = Gosu::Font.new(self, "font/simple.TTF",  70)
     @current_energy = Gosu::Font.new(self, "font/simple.TTF",  70)
     @background_image = Gosu::Image.new(self, "img/bg_starVII.png", false)
     @starscroll = Gosu::Image.new(self,"img/StarFar.png", false)
     # @starscrollsp = Gosu::Image.new(self,"img/Starclose.png", false)
     @startBackground = Gosu::Image.new(self, "img/Title.png", false)
+    @shop = Gosu::Image.new(self, "img/checkout.png", false)
+    @preshop = Gosu::Image.new(self, "img/bilan.png", false)
     @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
     #############Entity
     @player = Player.new(self)
@@ -66,13 +68,15 @@ class GameWindow <Gosu::Window
     if @gameState == 0                                                 # 0 = Start menu
       if button_down? Gosu::KbReturn; @gameState = 1; elsif button_down? Gosu::KbEscape; close; end
     elsif @gameState == 1                                              # 1 = Game in progress
+      puts @gameState
+      puts @phase
       ####################################### Basic movement an shooting states update
       @totaltime += 1
       if button_down? Gosu::KbEscape ;@gameState = 2 ;self.frameReset ;end
       @player.warp(mouse_x, mouse_y)
       @player.hurt_by(@bulletfall)
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
-      if button_down? Gosu::MsRight ;if @frame % @player.shootSpeed ==0;@bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
+      if button_down? Gosu::MsRight; if @frame % @player.shootSpeed == 0; @bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
       @badguy.reject! {|x| x.energy <= 0 || x.y>=self.height}
       @bulletfall.reject! {|x| (x.y>=self.height)}
       @badguy.each do |x|
@@ -93,17 +97,17 @@ class GameWindow <Gosu::Window
           @badguy << Fighter.new(self ,self.width/6,@seed[0] +70)<< Fighter.new(self , (width/6)*2,@seed[1] +70)<< Fighter.new(self , (width/6)*3,@seed[2] +70)<< Fighter.new(self , (width/6)*4,@seed[3] +70)<< Fighter.new(self , (width/6)*5,@seed[4] +70)<< Assault.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Cruiser.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Assault.new(self , (width/6)*5,@seed[4])
         elsif @phase == 4
           @gameState = 3
-          puts "#{@gameState}"
         end
       end
-      puts "#{@phase}"
     elsif @gameState == 2                                         # 2 = Game in pause
       if button_down? Gosu::KbReturn ;sleep(0.5) ;@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
     elsif  @gameState == 3
-      if @bulletrain.empty? && @bulletfall.empty?
-        @day+=1
-        @total_balance += @current_balance/100
-      end
+      @day+=1
+      @total_balance += @player.balance/100
+      @gameState = 4
+    elsif @gameState == 4
+      if button_down? Gosu::KbReturn ;@gameState = 5;end
+    elsif @gameState == 5
     end
 
     def draw
@@ -140,17 +144,15 @@ class GameWindow <Gosu::Window
         @background_image.draw_as_quad(0, 0, 0xeeeeeee, self.width, 0, 0xeeeeeee, self.width, self.height, 0xeeeeeee, 0, self.height, 0xeeeeeee, 0)
         @continue.draw width/2- @continue.width/2 , height/2- @continue.height/2, 1
         @quit.draw width/2- @quit.width/2 , height/2- @quit.height/2 + @quit.height, 1
-      elsif @gameState == 3
-        # @dayEnd.draw(self.width/2 - @dayEnd.width/2, self.height/2 - @dayEnd.height/2,1)
+      elsif @gameState == 4
         @dayEnd.draw(           "_-{]  Bataille _-| #{@day} |-_ est finie !",50,20,1 )
-        @balance.draw(          "_-{]  Ta reserve de balle est :    #{@current_balance}",50, 65,1)
-        @total_balance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
+        @balance.draw(          "_-{]  Ta reserve de balle est :    #{@player.balance}",50, 65,1)
+        @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
+        @continue.draw(50,600,1)
+      elsif @gamestate == 5
+        @shop.draw_as_quad(0, 0, 0xeeeeeee, self.width, 0, 0xeeeeeee, self.width, self.height, 0xeeeeeee, 0, self.height, 0xeeeeeee, 1)
       end
     end
-    # @current_balance.draw(@player.balance,0,0,2)
-    # @dayEnd = Gosu::Image.from_text(self,"_-{]  Bataille _-| #{@day} |-_ est finie ! [}-_", "font/simple.TTF",  55)
-    # @balance = Gosu::Image.from_text(self,"_-{]  Ta reserve de balle est : #{@current_balance} [}-_", "font/simple.TTF",  55)
-    # @total_balance = Gosu::Image.from_text(self,"_-{]  Ton solde est : #{@total_balance} [}-_", "font/simple.TTF",  55)
     ######################################## controlls whith no effects in phase or state gestion
 
     def button_down(id )
@@ -292,8 +294,9 @@ class GameWindow <Gosu::Window
     end
     def hurt_by(array)
       array.reject! do |bullet|
-        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && ( self.y+self.height/2 - bullet.y)< 10 ; self.hit(bullet.pow,bullet.recoil);
-          true
+        if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
+          self.hit(bullet.pow,bullet.recoil);
+          true;
         end
       end
     end
@@ -352,7 +355,6 @@ class GameWindow <Gosu::Window
     end
   end
 end
-
 ######################################    Init of Window And Gosu Magicks
 window = GameWindow.new
 window.show
