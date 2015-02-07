@@ -20,7 +20,7 @@ end
 class GameWindow <Gosu::Window
 
   def initialize
-    super(1620, 1024, true)
+    super(1620, 1024, false)
 
     #############VarInit
     @day =0
@@ -67,6 +67,7 @@ class GameWindow <Gosu::Window
 
   def update
     self.up_frame
+    @arc = 0;
     if @gameState == 0                                                 # 0 = Start menu
       if button_down? Gosu::KbReturn; @gameState = 1; elsif button_down? Gosu::KbEscape; close; end
     elsif @gameState == 1                                              # 1 = Game in progress
@@ -74,7 +75,14 @@ class GameWindow <Gosu::Window
       @totaltime += 1
       if button_down? Gosu::KbEscape ;@gameState = 2 ;self.frameReset ;end
       @player.warp(mouse_x, mouse_y)
-      @player.hurt_by(@bulletfall)
+      if (@player.hurt_by(@bulletfall) == true)
+        @arc = 100;
+        @player.drawHit(@player.x, @player.y);
+      end
+      if (@arc > 0)
+        @arc -= 1;
+        @player.drawHit(@player.x, @player.y);
+      end
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
       if button_down? Gosu::MsRight; if @frame % @player.shootSpeed == 0; @bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
       @badguy.reject! {|x| x.energy <= 0 || x.y>=self.height}
@@ -126,6 +134,11 @@ class GameWindow <Gosu::Window
         if @badguy
           @badguy.each do |x|
             x.damaged.each do |d|
+              if (d < -x.width / 2)
+                d = -x.width / 2
+              elsif d > x.width / 2
+                d = x.width / 2
+              end
               @damageFire[(@totaltime % 8)].draw(x.x + d, x.y, 0)
             end
           end          
@@ -182,10 +195,15 @@ class GameWindow <Gosu::Window
     end
 
     def hurt_by(array)
+      @a = false
       array.reject! do |bullet|
-        if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10 then @energy -= bullet.pow ;end
+        if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
+          @energy -= bullet.pow ;
+          @a = true;
+        end
         Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
       end
+      return @a;
     end
     def warp (x, y)
       @x = x
@@ -196,7 +214,7 @@ class GameWindow <Gosu::Window
     def move_up ;                self.warp(@x, @y-10); end
     def move_down;                self.warp(@x, @y+10); end
     def draw;                     @image.draw_rot(@x, @y, 1, @angle); end
-    def drawHit;                  @dmg.draw(@x, @y-10,2);end
+    def drawHit(x, y);                  @dmg.draw(x, y,2);end
     def shootSpeed ;           @shootSpeed ; end
     def increaseShootSpeed; if@shootSpeed >2; @shootSpeed-=1; end; end
     def decreaseShootSpeed; if @shootSpeed < 20 ; @shootSpeed+=1 ; end ; end
