@@ -122,12 +122,16 @@ class GameWindow <Gosu::Window
         if button_down? Gosu::MsLeft
           if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
             @player.shield += 50
+            @total_balance -= 20
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
             @player.ally += 1
+            @total_balance -= 20
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
             @player.loan += 1
+            @total_balance +=700
+            @player.daypay -= 300
             sleep(0.5)
           end
         end
@@ -135,12 +139,16 @@ class GameWindow <Gosu::Window
         if button_down? Gosu::MsLeft
           if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
             @player.shield += 50
+            @total_balance -= 30
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
             @player.ally += 1
+            @total_balance -= 30
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
             @player.loan += 1
+            @total_balance +=700
+            @player.daypay -= 200
             sleep(0.5)
           end
         end
@@ -228,14 +236,8 @@ class GameWindow <Gosu::Window
         @bankMessage.draw("Les prochains jours riquent d'etre DURS", 1000,655,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Nous pensons pouvoir vous AIDER " , 1000,710,1,1,1,Gosu::Color::BLACK)
         @iconShield.draw(50,50,2)
-        puts @iconShield.width
-        puts @iconShield.height
         @iconInvest.draw(50,160,2)
-        puts @iconInvest.width
-        puts @iconInvest.height
         @iconLoan.draw(50,270,2)
-        puts @iconLoan.width
-        puts @iconLoan.height
       end
     end
   end
@@ -254,14 +256,17 @@ end
 
 
 class Player
-  attr_accessor :x, :y, :energy , :ally , :loan,:shield
+  attr_accessor :x, :y, :energy , :ally , :loan,:shield , :daypay
   attr_reader :balance ,:axx ,:axy
   def initialize (window)
     @dmg = Gosu::Image.new(window,"img/dmg.png", false)
-    @image = Gosu::Image.new(window, "img/StarshipHbox.png" ,false)
-    @axy = @axx = @x = @y = @vel_x = @vel_y = @angle =0.0
+    @image = Gosu::Image.new(window, "img/StarshipHbox.png" ,false);
+
+    @allyship =
+      @axy = @axx = @x = @y = @vel_x = @vel_y = @angle =0.0
     @score = 0
     @shootSpeed = 8
+    @daypay = 1000
     @balance = 1000
     @energy = 1000
     @shield = 0
@@ -273,7 +278,11 @@ class Player
     @a = false
     array.reject! do |bullet|
       if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
-        @energy -= bullet.pow ;
+        if @player.shield > 0
+          @player.shield-= bullet.pow
+        else
+          @energy -= bullet.pow ;
+        end
         @a = true;
       end
       Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
