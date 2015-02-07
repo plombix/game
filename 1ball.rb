@@ -261,9 +261,7 @@ class Player
   def initialize (window)
     @dmg = Gosu::Image.new(window,"img/dmg.png", false)
     @image = Gosu::Image.new(window, "img/StarshipHbox.png" ,false);
-
-    @allyship =
-      @axy = @axx = @x = @y = @vel_x = @vel_y = @angle =0.0
+    @axy = @axx = @x = @y = @vel_x = @vel_y = @angle =0.0
     @score = 0
     @shootSpeed = 8
     @daypay = 1000
