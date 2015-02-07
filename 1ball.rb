@@ -33,6 +33,7 @@ class GameWindow <Gosu::Window
     @phase =  0
     @frame = 0
     @totaltime = 0
+    @arc = 0
     @skrolIndex = 0
     @gameState = 0          # 0 = Start menu  1 = Game in progress  2 = Game in pause  3 = Game in end of day 4 = Game in mana
     #############Sounds
@@ -57,6 +58,7 @@ class GameWindow <Gosu::Window
     @startBackground = Gosu::Image.new(self, "img/Title.png", false)
     @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
     #############Entity
+    @dmg2 = Gosu::Image.new(self,"img/dmg.png", false)
     @player = Player.new(self)
     @badguy<< Fighter.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Fighter.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Fighter.new(self , (width/6)*5,@seed[4])
   end
@@ -67,7 +69,6 @@ class GameWindow <Gosu::Window
 
   def update
     self.up_frame
-    @arc = 0;
     if @gameState == 0                                                 # 0 = Start menu
       if button_down? Gosu::KbReturn; @gameState = 1; elsif button_down? Gosu::KbEscape; close; end
     elsif @gameState == 1                                              # 1 = Game in progress
@@ -77,11 +78,14 @@ class GameWindow <Gosu::Window
       @player.warp(mouse_x, mouse_y)
       if (@player.hurt_by(@bulletfall) == true)
         @arc = 100;
-        @player.drawHit(@player.x, @player.y);
+        # binding.pry
+
+       # @player.drawHit(@player.x, @player.y);
       end
       if (@arc > 0)
         @arc -= 1;
-        @player.drawHit(@player.x, @player.y);
+        puts @arc;
+        @dmg2.draw(@player.x, @player.y, 2);
       end
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
       if button_down? Gosu::MsRight; if @frame % @player.shootSpeed == 0; @bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
