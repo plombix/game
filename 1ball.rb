@@ -13,7 +13,7 @@ require 'rubygems'
 class GameWindow <Gosu::Window
 
   def initialize
-    super(1620, 1024, false)
+    super(1620, 1024, true)
 
     #############VarInit
     @day =0
@@ -43,6 +43,7 @@ class GameWindow <Gosu::Window
     # @count0 = Gosu::Image.from_text(self,"_-{]  GO!  [}-_", "font/simple.TTF",  55)
     #############Images/Anims
     @dayEnd = Gosu::Font.new(self, "font/simple.TTF",  45)
+    @bankMessage = Gosu::Font.new(self, "font/cool.otf", 30)
     @balance = Gosu::Font.new(self, "font/simple.TTF",  45)
     @totalBalance = Gosu::Font.new(self, "font/simple.TTF",  45)
     @current_balance = Gosu::Font.new(self, "font/simple.TTF",  70)
@@ -51,9 +52,12 @@ class GameWindow <Gosu::Window
     @starscroll = Gosu::Image.new(self,"img/StarFar.png", false)
     # @starscrollsp = Gosu::Image.new(self,"img/Starclose.png", false)
     @startBackground = Gosu::Image.new(self, "img/Title.png", false)
+    @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
     @shop = Gosu::Image.new(self, "img/checkout.png", false)
     @preshop = Gosu::Image.new(self, "img/bilan.png", false)
-    @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
+    @iconShield = Gosu::Image.new(self, "img/Ishield.png",false)
+    @iconInvest = Gosu::Image.new(self, "img/IIally.png",false)
+    @iconLoan = Gosu::Image.new(self, "img/Iloan.png",false)
     #############Entity
     @player = Player.new(self)
     @badguy<< Fighter.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Fighter.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Fighter.new(self , (width/6)*5,@seed[4])
@@ -109,9 +113,6 @@ class GameWindow <Gosu::Window
     elsif @gameState == 4
       if button_down? Gosu::KbReturn ;@gameState = 5;end
     end
-    if @gameState == 5
-
-    end
   end
 
 
@@ -149,17 +150,30 @@ class GameWindow <Gosu::Window
       @background_image.draw_as_quad(0, 0, 0xeeeeeee, self.width, 0, 0xeeeeeee, self.width, self.height, 0xeeeeeee, 0, self.height, 0xeeeeeee, 0)
       @continue.draw width/2- @continue.width/2 , height/2- @continue.height/2, 1
       @quit.draw width/2- @quit.width/2 , height/2- @quit.height/2 + @quit.height, 1
-    end
-    if @gameState == 4
+    elsif @gameState == 4
       @preshop.draw(0,0,0)
       @dayEnd.draw(           "_-{]  Bataille _-| #{@day} |-_ est finie !",50,20,1 )
       @balance.draw(          "_-{]  Ta reserve de balle est :    #{@player.balance}",50, 65,1)
       @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
       @continue.draw(50,600,1)
-    end
-    if @gamestate == 5
+    elsif @gameState == 5
       puts @gameState
       @shop.draw(0,0,0)
+      if @total_balance > 0
+        @bankMessage.draw("Hum ... Vous avez des DISPONIBILITES." , 1000,600,1,1,1,Gosu::Color::BLACK)
+        @bankMessage.draw("Peut etre pouvons nous vous PROPOSER" , 1000,650,1,1,1,Gosu::Color::BLACK)
+        @bankMessage.draw("des AMELIORATIONS " , 1000,710,1,1,1,Gosu::Color::BLACK)
+        @iconShield.draw(50,50,2)
+        @iconInvest.draw(50,150,2)
+        @iconLoan.draw(50,300,2)
+      elsif @total_balance < 0
+        @bankMessage.draw("Hum ... Vous etes a DECOUVERT." , 1000,600,1,1,1,Gosu::Color::BLACK)
+        @bankMessage.draw("Les prochains jours riquent d'etre DURS", 1000,655,1,1,1,Gosu::Color::BLACK)
+        @bankMessage.draw("Nous pensons pouvoir vous AIDER " , 1000,710,1,1,1,Gosu::Color::BLACK)
+        @iconShield.draw(50,50,2)
+        @iconInvest.draw(50,150,2)
+        @iconLoan.draw(50,300,2)
+      end
     end
   end
   ######################################## controlls whith no effects in phase or state gestion
