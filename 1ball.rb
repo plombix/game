@@ -78,8 +78,6 @@ class GameWindow <Gosu::Window
       @player.warp(mouse_x, mouse_y)
       if (@player.hurt_by(@bulletfall) == true)
         @arc = 30;
-        # binding.pry
-       # @player.drawHit(@player.x, @player.y);
       end
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
       if button_down? Gosu::MsRight; if @frame % @player.shootSpeed == 0; @bulletrain<< BulletM.new(self ,@player.x-50, (@player.y-20));@player.balance_down 10 ;end;end
