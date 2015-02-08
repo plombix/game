@@ -109,7 +109,7 @@ class GameWindow <Gosu::Window
         end
       end
     elsif @gameState == 2                                         # 2 = Game in pause
-      if button_down? Gosu::KbReturn ;sleep(0.5) ;@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
+      if button_down? Gosu::KbReturn ;sleep(0.5);@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
     elsif  @gameState == 3
       puts @gameState
       @day+=1
@@ -261,13 +261,14 @@ class Player
   def initialize (window)
     @dmg = Gosu::Image.new(window,"img/dmg.png", false)
     @image = Gosu::Image.new(window, "img/StarshipHbox.png" ,false);
+    @shieldImage = Gosu::Image.new(window, "img/shield.png" ,false);
     @axy = @axx = @x = @y = @vel_x = @vel_y = @angle =0.0
     @score = 0
     @shootSpeed = 8
     @daypay = 1000
     @balance = 1000
     @energy = 1000
-    @shield = 0
+    @shield = 100
     @loan = 0
     @ally = 0
   end
@@ -276,10 +277,10 @@ class Player
     @a = false
     array.reject! do |bullet|
       if Gosu::distance(@x, @y - @image.height, bullet.x+bullet.width/2, bullet.y+bullet.height) < 10
-        if @player.shield > 0
-          @player.shield-= bullet.pow
+        if self.shield > 0
+          self.shield-= bullet.pow
         else
-          @energy -= bullet.pow ;
+          @energy -= bullet.pow;
         end
         @a = true;
       end
@@ -295,7 +296,12 @@ class Player
   def move_right;           self.warp(@x+10, @y); end
   def move_up ;                self.warp(@x, @y-10); end
   def move_down;                self.warp(@x, @y+10); end
-  def draw;                     @image.draw_rot(@x, @y, 1, @angle); end
+  def draw;
+    @image.draw_rot(@x, @y, 1, @angle)
+    if self.shield > 0
+      @shieldImage.draw_rot(@x, @y, 1, @angle)
+    end
+  end
   def drawHit(x ,y);                  @dmg.draw(x, y);end
   def shootSpeed ;           @shootSpeed ; end
   def increaseShootSpeed; if@shootSpeed >2; @shootSpeed-=1; end; end
