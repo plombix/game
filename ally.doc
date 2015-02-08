@@ -1,0 +1,63 @@
+class Ally
+  attr_reader :x, :y
+  attr_accessor :energy
+  attr_accessor :shootSpeed
+  attr_accessor :damaged
+  def initialize(window, x, y)
+    @x = x
+    @y = y
+    @max_energy = 100
+    @moveSpeed = 0.2
+    @energy = @max_energy
+    @shootSpeed = 10
+    @image = Gosu::Image.new(window,"img/Ially.png")
+    @damaged = Array.new
+    @windowWidth = window.width
+    @window = window
+  end
+  def hurt_by(array)
+    array.reject! do |bullet|
+      if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
+        self.hit(bullet.pow,bullet.recoil);
+        @damaged.push (bullet.x - self.x)
+        true;
+      end
+    end
+  end
+  def draw(x, y);                      @image.draw(x, y,0); end
+  def energy ;                         @energy; end
+  def hit (pow, recoil) ;              @energy -= pow ;end
+  def height;                          @image.height; end
+  def width;                           @image.width; end
+  def move (x,y)
+    @x = ((@windowWidth/2)- @image.width) + (Math.sin(Gosu::milliseconds / 1333.7)*((@windowWidth/2)- @image.width))
+  end
+  def shoot (window)
+    Bullet.new(@window ,@x-12, (@y-20))
+  end
+end
+
+
+//initialise en dessous de badguy
+
+
+@goodguy =  []
+
+//update en dessous de badguy
+
+ if (@goodguy)
+        @goodguy.each do |b|
+         b.hurt_by(@bulletfall)
+         b.move(b.x, b.y);
+        if@frame % b.shootSpeed == 0
+          @bulletrain<<b.shoot(self)
+        end
+       end
+      end
+
+//draw en dessous de badguy
+ if (@goodguy)
+        @goodguy.each do |g|
+          g.draw(g.x,g.y);
+        end
+      ends
