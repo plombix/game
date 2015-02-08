@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1620"
+   height="1024"
+   viewBox="0 0 1620 1024"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="drawing.svg">
+  <defs
+     id="defs4">
+    <filter
+       inkscape:label="Blur"
+       inkscape:menu="Scatter"
+       inkscape:menu-tooltip="Scattered cubes; adjust the Morphology primitive to vary size"
+       style="color-interpolation-filters:sRGB;"
+       id="filter5110">
+      <feTurbulence
+         baseFrequency="0.14"
+         numOctaves="1"
+         type="fractalNoise"
+         id="feTurbulence5112" />
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 6 -3.5 "
+         result="result5"
+         id="feColorMatrix5114" />
+      <feComposite
+         in2="result5"
+         operator="in"
+         in="SourceGraphic"
+         result="result6"
+         id="feComposite5116" />
+      <feMorphology
+         result="result3"
+         radius="5"
+         operator="dilate"
+         in="result6"
+         id="feMorphology5118" />
+      <feDisplacementMap
+         result="result4"
+         scale="0"
+         yChannelSelector="A"
+         xChannelSelector="R"
+         in="result3"
+         in2="result3"
+         id="feDisplacementMap5120" />
+      <feComposite
+         in2="result4"
+         operator="arithmetic"
+         result="result2"
+         k1="1"
+         k3="1"
+         id="feComposite5122" />
+      <feBlend
+         mode="darken"
+         in="result2"
+         in2="result2"
+         id="feBlend5124" />
+      <feConvolveMatrix
+         order="3 3"
+         kernelMatrix="2 0 0 0 1 0 0 0 -1 "
+         targetX="1"
+         targetY="1"
+         divisor="2"
+         edgeMode="duplicate"
+         id="feConvolveMatrix5126"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix5201" />
+      <feGaussianBlur
+         id="feGaussianBlur5203"
+         stdDeviation="15.3 4.11"
+         result="blur"
+         in="fbSourceGraphic" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Lapping"
+       id="filter5213"
+       inkscape:menu="Distort"
+       inkscape:menu-tooltip="Something like a water noise"
+       height="1.3"
+       y="-0.15"
+       width="1.3"
+       x="-0.15">
+      <feConvolveMatrix
+         in="SourceGraphic"
+         kernelMatrix="0 1 0 1 -4 1 0 1 0"
+         order="3 3"
+         bias="0"
+         divisor="0.0909091"
+         targetX="1"
+         targetY="1"
+         preserveAlpha="true"
+         result="fbSourceGraphic"
+         id="feConvolveMatrix5215" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix5217" />
+      <feTurbulence
+         id="feTurbulence5219"
+         numOctaves="5"
+         seed="0"
+         type="fractalNoise"
+         baseFrequency="0.1"
+         result="result1"
+         in="fbSourceGraphic" />
+      <feGaussianBlur
+         id="feGaussianBlur5221"
+         stdDeviation="2"
+         result="result2" />
+      <feDisplacementMap
+         id="feDisplacementMap5223"
+         in2="result2"
+         scale="50"
+         yChannelSelector="B"
+         xChannelSelector="R"
+         in="fbSourceGraphic" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.12374369"
+     inkscape:cx="1411.1986"
+     inkscape:cy="-657.65703"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1280"
+     inkscape:window-height="687"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-28.362161)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:180px;line-height:125%;font-family:Superclarendon;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;-inkscape-font-specification:Superclarendon;font-stretch:normal;font-variant:normal;"
+       x="434.28571"
+       y="423.79071"
+       id="text4136"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4138"
+         x="434.28571"
+         y="423.79071" /></text>
+    <g
+       id="g5251"
+       transform="translate(24.243661,8.0812204)">
+      <g
+         id="g5225">
+        <rect
+           style="opacity:1;fill:#808080;fill-opacity:1;stroke:#000000;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5110)"
+           id="rect5108"
+           width="1625.7142"
+           height="1020"
+           x="11.428586"
+           y="46.647877" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:278.71411133px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:16.98999977px;writing-mode:lr-tb;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter5213)"
+           x="518.9989"
+           y="392.97522"
+           id="text4140"
+           sodipodi:linespacing="125%"
+           transform="matrix(1.5602732,0,0,0.6409134,-8.5714286,102.85714)"
+           inkscape:transform-center-x="2.857167"
+           inkscape:transform-center-y="-20.000019"><tspan
+             sodipodi:role="line"
+             id="tspan4142"
+             x="518.9989"
+             y="392.97522"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Trattatello;-inkscape-font-specification:Trattatello;text-align:center;word-spacing:16.98999977px;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:middle"
+             rotate="0 0 0 0.1 0"
+             dy="21.379999"
+             dx="-3.3699999">VOUS</tspan><tspan
+             sodipodi:role="line"
+             x="518.9989"
+             y="741.36786"
+             id="tspan4144"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Trattatello;-inkscape-font-specification:Trattatello;text-align:center;word-spacing:16.98999977px;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:middle"
+             rotate="0 0 0 0 0">ETES</tspan><tspan
+             sodipodi:role="line"
+             x="518.9989"
+             y="1089.7605"
+             id="tspan4146"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Trattatello;-inkscape-font-specification:Trattatello;text-align:center;word-spacing:16.98999977px;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:middle"
+             rotate="0 0 0 0 0">MORT</tspan></text>
+      </g>
+    </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5133"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:175px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion5135"><rect
+           id="rect5137"
+           width="1222.8572"
+           height="382.85715"
+           x="322.85715"
+           y="426.85715" /></flowRegion><flowPara
+         id="flowPara5139"></flowPara></flowRoot>  </g>
+</svg>
