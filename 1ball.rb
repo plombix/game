@@ -30,7 +30,7 @@ class GameWindow <Gosu::Window
     @arc = 0
     @skrolIndex = 0
     @total_balance = 0
-    @balance_max = 2000.0
+    @balance_max = 100.0
     @gameState = 0          # 0 = Start menu  1 = Game in progress  2 = Game in pause  3 = Game in end of day 4 = Game in mana
     #############Sounds
     @wait_a_min = Gosu::Sample.new(self, "sound/wait-a-minute.wav")
