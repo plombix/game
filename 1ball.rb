@@ -22,6 +22,7 @@ class GameWindow <Gosu::Window
     @bulletfall = []
     @bulletchain = []
     @badguy =  []
+    @goodguy =  []
     @hardguy= []
     @phase =  0
     @frame = 0
@@ -95,6 +96,15 @@ class GameWindow <Gosu::Window
           @bulletfall<<x.shoot(self)
         end
       end
+      if (@goodguy)
+        @goodguy.each do |b|
+         b.hurt_by(@bulletfall)
+         b.move(b.x, b.y);
+        if@frame % b.shootSpeed == 0
+          @bulletrain<<b.shoot(self)
+        end
+       end
+      end
       ######################################## Controlling game state by ennemy presence && setup of squads
       if @badguy.empty?
         @phase +=1
@@ -126,6 +136,7 @@ class GameWindow <Gosu::Window
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
             @player.ally += 1
+            @goodguy << Ally.new(self, self.width/2, self.height - 10)
             @total_balance -= 20
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
@@ -143,6 +154,7 @@ class GameWindow <Gosu::Window
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
             @player.ally += 1
+            @goodguy << Ally.new(self, self.width/2, self.height - 10)
             @total_balance -= 30
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
@@ -177,6 +189,11 @@ class GameWindow <Gosu::Window
       if @badguy
         @badguy.each do |x|
           x.draw(x.x , x.y)
+        end
+      end
+      if (@goodguy)
+        @goodguy.each do |g|
+          g.draw(g.x,g.y);
         end
       end
       if @badguy
@@ -461,6 +478,44 @@ class Cruiser<Enemy
   end
   def shoot (window)
     CruiserBullet2.new(window,@x+@image.width/2, @y+@image.height)
+  end
+end
+class Ally
+  attr_reader :x, :y
+  attr_accessor :energy
+  attr_accessor :shootSpeed
+  attr_accessor :damaged
+  def initialize(window, x, y)
+    @x = x
+    @y = y
+    @max_energy = 100
+    @moveSpeed = 0.2
+    @energy = @max_energy
+    @shootSpeed = 10
+    @image = Gosu::Image.new(window,"img/Ially.png")
+    @damaged = Array.new
+    @windowWidth = window.width
+    @window = window
+  end
+  def hurt_by(array)
+    array.reject! do |bullet|
+      if (((self.x+self.width/2)- (bullet.x+bullet.width/2)).abs < self.width) && (((self.y+self.height/2)- (bullet.y+bullet.height/2)).abs < self.height)
+        self.hit(bullet.pow,bullet.recoil);
+        @damaged.push (bullet.x - self.x)
+        true;
+      end
+    end
+  end
+  def draw(x, y);                      @image.draw(x, y,0); end
+  def energy ;                         @energy; end
+  def hit (pow, recoil) ;              @energy -= pow ;end
+  def height;                          @image.height; end
+  def width;                           @image.width; end
+  def move (x,y)
+    @x = ((@windowWidth/2)- @image.width) + (Math.sin(Gosu::milliseconds / 1333.7)*((@windowWidth/2)- @image.width))
+  end
+  def shoot (window)
+    Bullet.new(@window ,@x-12, (@y-20))
   end
 end
 

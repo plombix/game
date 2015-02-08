@@ -60,4 +60,4 @@ end
         @goodguy.each do |g|
           g.draw(g.x,g.y);
         end
-      ends
+      end
