@@ -37,20 +37,21 @@ class GameWindow <Gosu::Window
     @pew = Gosu::Sample.new(self, "sound/pew1.wav")
     #############Texts
     self.caption = "_-{]   BalanceD   [}-_"
-    @start_text1 = Gosu::Image.from_text(self,"_-{]  Entree pour Commencer  [}-_", "font/simple.TTF",  55)
-    @start_text2 = Gosu::Image.from_text(self,"_-{]    Escape pour Quitter    [}-_", "font/simple.TTF",  55)
-    @continue = Gosu::Image.from_text(self,"_-{]  Entree pour Continuer  [}-_", "font/simple.TTF",  55)
-    @quit= Gosu::Image.from_text(self,"_-{]  P pour Quitter  [}-_", "font/simple.TTF",  55)
-    # @count2 = Gosu::Image.from_text(self,"_-{]  2  [}-_", "font/simple.TTF",  55)
-    # @count1 = Gosu::Image.from_text(self,"_-{]  1  [}-_", "font/simple.TTF",  55)
-    # @count0 = Gosu::Image.from_text(self,"_-{]  GO!  [}-_", "font/simple.TTF",  55)
+    @start_text1 = Gosu::Image.from_text(self,"_-{]  Entree pour Commencer  [}-_", "font/simple.ttf",  55)
+    @start_text2 = Gosu::Image.from_text(self,"_-{]    Escape pour Quitter    [}-_", "font/simple.ttf",  55)
+    @continue = Gosu::Image.from_text(self,"_-{]  Entree pour Continuer  [}-_", "font/simple.ttf",  55)
+    @quit= Gosu::Image.from_text(self,"_-{]  P pour Quitter  [}-_", "font/simple.ttf",  55)
+    # @count2 = Gosu::Image.from_text(self,"_-{]  2  [}-_", "font/simple.ttf",  55)
+    # @count1 = Gosu::Image.from_text(self,"_-{]  1  [}-_", "font/simple.ttf",  55)
+    # @count0 = Gosu::Image.from_text(self,"_-{]  GO!  [}-_", "font/simple.ttf",  55)
     #############Images/Anims
-    @dayEnd = Gosu::Font.new(self, "font/simple.TTF",  45)
-    @bankMessage = Gosu::Font.new(self, "font/cool.otf", 30)
-    @balance = Gosu::Font.new(self, "font/simple.TTF",  45)
-    @totalBalance = Gosu::Font.new(self, "font/simple.TTF",  45)
-    @current_balance = Gosu::Font.new(self, "font/simple.TTF",  70)
-    @current_energy = Gosu::Font.new(self, "font/simple.TTF",  70)
+    @dayEnd = Gosu::Font.new(self, "font/simple.ttf",  45)
+    @dayEndtitle = Gosu::Font.new(self, "font/simple.ttf",  60)
+    @bankMessage = Gosu::Font.new(self, "font/simple2.TTF", 30)
+    @balance = Gosu::Font.new(self, "font/simple.ttf",  45)
+    @totalBalance = Gosu::Font.new(self, "font/simple.ttf",  45)
+    @current_balance = Gosu::Font.new(self, "font/simple.ttf",  70)
+    @current_energy = Gosu::Font.new(self, "font/simple.ttf",  70)
     @background_image = Gosu::Image.new(self, "img/bg_starVII.png", false)
     @starscroll = Gosu::Image.new(self,"img/StarFar.png", false)
     @redgreen = Gosu::Image.new(self,"img/redgreen.png", false)
@@ -58,7 +59,7 @@ class GameWindow <Gosu::Window
     # @starscrollsp = Gosu::Image.new(self,"img/Starclose.png", false)
     @startBackground = Gosu::Image.new(self, "img/Title.png", false)
     @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
-    @shop = Gosu::Image.new(self, "img/ShopFonf.png", false)
+    @shop = Gosu::Image.new(self, "img/ShopFonf2.png", false)
     @preshop = Gosu::Image.new(self, "img/ShopFonf.png", false)
     @iconShield = Gosu::Image.new(self, "img/Shieldbutton.png",false)
     @iconInvest = Gosu::Image.new(self, "img/UpgradeButton.png",false)
@@ -81,6 +82,7 @@ class GameWindow <Gosu::Window
     if @gameState == 0                                                 # 0 = Start menu
       @player.energy = 500
       if button_down? Gosu::KbReturn; @gameState = 1; elsif button_down? Gosu::KbEscape; close; end
+      if button_down? Gosu::MsLeft ;sleep(0.5);@gameState = 1;end
     elsif @gameState == 1                                              # 1 = Game in progress
       ####################################### Basic movement an shooting states update
       @totaltime += 1
@@ -128,6 +130,7 @@ class GameWindow <Gosu::Window
       end
     elsif @gameState == 2                                         # 2 = Game in pause
       if button_down? Gosu::KbReturn ;sleep(0.5);@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
+      if button_down? Gosu::MsLeft ;sleep(0.5);@gameState = 1;end
     elsif  @gameState == 3
       puts @gameState
       @day+=1
@@ -135,18 +138,19 @@ class GameWindow <Gosu::Window
       @gameState = 4
     elsif @gameState == 4
       if button_down? Gosu::KbReturn ;sleep(0.5);@gameState = 5;end
+      if button_down? Gosu::MsLeft ;sleep(0.5);@gameState = 5;end
     elsif @gameState == 5
       if button_down? Gosu::KbReturn; @gameState = 1;end
       if @total_balance > 0
         if button_down? Gosu::MsLeft
           if mouse_x <400 && mouse_x > 300 && mouse_y <400 && mouse_y > 300
             @player.shield += 50
-            @total_balance -= 20
+            @total_balance -= 40
             sleep(0.5)
           elsif mouse_x <400 && mouse_x > 300 && mouse_y <510 && mouse_y >  410
             @player.ally += 1
             @goodguy << Ally.new(self, self.width/2, self.height - 10)
-            @total_balance -= 20
+            @total_balance -= 100
             sleep(0.5)
           elsif mouse_x <400 && mouse_x > 300 && mouse_y <620 && mouse_y > 520
             @player.loan += 1
@@ -159,10 +163,10 @@ class GameWindow <Gosu::Window
         if button_down? Gosu::MsLeft
           if mouse_x <400 && mouse_x > 300 && mouse_y <400 && mouse_y > 300
             @player.shield += 50
-            @total_balance -= 30
+            @total_balance -= 40
             sleep(0.5)
           elsif mouse_x <400 && mouse_x > 300 && mouse_y <510 && mouse_y >  410
-            @player.ally += 1
+            @player.ally += 100
             @goodguy << Ally.new(self, self.width/2, self.height - 50)
             @total_balance -= 30
             sleep(0.5)
@@ -250,10 +254,10 @@ class GameWindow <Gosu::Window
       @quit.draw width/2- @quit.width/2 , height/2- @quit.height/2 + @quit.height, 1
     elsif @gameState == 4
       @preshop.draw(0,0,0)
-      @dayEnd.draw(           "_-{]  Bataille _-| #{@day} |-_ est finie !",100,100,1 )
-      @balance.draw(          "_-{]  Ta reserve de balle est :    #{@player.balance}",100, 145,1)
-      @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",100,190,1)
-      @continue.draw(50,600,1)
+      @dayEndtitle.draw(           " Bataille _-| #{@day} |-_ est finie !",450,100,1 )
+      @balance.draw(          "Ta reserve de balle est :    #{@player.balance}",550, 500,1)
+      @totalBalance.draw(    "Ton solde est :              #{@total_balance}",550,550,1)
+      @continue.draw(450,900,1)
     elsif @gameState == 5
       @shop.draw(0,0,0)
       @pointer.draw(mouse_x, mouse_y,3)
@@ -262,17 +266,23 @@ class GameWindow <Gosu::Window
         @bankMessage.draw("Peut etre pouvons nous vous PROPOSER" , 1000,650,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("des AMELIORATIONS " , 1000,710,1,1,1,Gosu::Color::BLACK)
         @iconShield.draw(300,300,2)
+        @bankMessage.draw("#{@player.shield}", 500,300,1,1,1,Gosu::Color::BLACK)
         @iconInvest.draw(300,410,2)
+        @bankMessage.draw("#{@player.ally}", 500,410,1,1,1,Gosu::Color::BLACK)
         @iconLoan.draw(300,520,2)
+        @bankMessage.draw("#{@total_balance}", 500,520,1,1,1,Gosu::Color::BLACK)
         @start_text1.draw width/2 - @start_text1.width/2, height- 170, 10
       elsif @total_balance < 0
         @bankMessage.draw("Hum ... Vous etes a DECOUVERT." , 1000,600,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Les prochains jours riquent d'etre DURS", 1000,655,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Nous pensons pouvoir vous AIDER " , 1000,710,1,1,1,Gosu::Color::BLACK)
         @iconShield.draw(300,300,2)
+        @bankMessage.draw("#{@player.shield}", 500,300,1,1,1,Gosu::Color::BLACK)
         @iconInvest.draw(300,410,2)
+        @bankMessage.draw("#{@player.ally}", 500,410,1,1,1,Gosu::Color::BLACK)
         @iconLoan.draw(300,520,2)
-        @start_text1.draw 50, height- 170, 10
+        @bankMessage.draw("#{@total_balance}", 500,520,1,1,1,Gosu::Color::BLACK)
+        @continue.draw 50, height- 170, 10
       end
     elsif @gameState == 6
       @dead.draw(0,0,0)
@@ -518,7 +528,7 @@ class Cruiser<Enemy
     end
   end
   def shoot (window)
-    CruiserBullet2.new(window,@x+@image.width/2, @y+@image.height)
+    CruiserBullet1.new(window,@x+@image.width/2, @y+@image.height)
   end
 end
 class Ally
@@ -532,7 +542,7 @@ class Ally
     @max_energy = 100
     @moveSpeed = 0.2
     @energy = @max_energy
-    @shootSpeed = 10
+    @shootSpeed = 35
     @image = Gosu::Image.new(window,"img/Ially.png")
     @damaged = Array.new
     @windowWidth = window.width
