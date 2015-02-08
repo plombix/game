@@ -123,9 +123,6 @@ class GameWindow <Gosu::Window
           @gameState = 3
         end
       end
-      angle = (@total_balance * -45.0) / @balance_max;
-      @redgreen.draw(0, self.height - @redgreen.height,10);
-      @needle.draw_rot(10, self.height - 10, 10, angle + 45.0, 0.5, 1);
     elsif @gameState == 2                                         # 2 = Game in pause
       if button_down? Gosu::KbReturn ;sleep(0.5);@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
     elsif  @gameState == 3
@@ -239,6 +236,9 @@ class GameWindow <Gosu::Window
           o.draw
         end
       end
+      angle = (@total_balance * -45.0) / @balance_max;
+      @redgreen.draw(0, self.height - @redgreen.height,10);
+      @needle.draw_rot(10, self.height - 10, 10, angle + 45.0, 0.5, 1);
     elsif @gameState == 2                                              # 2 = Game in pause
       @background_image.draw_as_quad(0, 0, 0xeeeeeee, self.width, 0, 0xeeeeeee, self.width, self.height, 0xeeeeeee, 0, self.height, 0xeeeeeee, 0)
       @continue.draw width/2- @continue.width/2 , height/2- @continue.height/2, 1
