@@ -155,7 +155,7 @@ class GameWindow <Gosu::Window
             sleep(0.5)
           end
         end
-      elsif @total_balance < 0
+      elsif @total_balance <= 0
         if button_down? Gosu::MsLeft
           if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
             @player.shield += 50
@@ -163,7 +163,7 @@ class GameWindow <Gosu::Window
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
             @player.ally += 1
-            @goodguy << Ally.new(self, self.width/2, self.height - 10)
+            @goodguy << Ally.new(self, self.width/2, self.height - 50)
             @total_balance -= 30
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
