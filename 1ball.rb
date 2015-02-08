@@ -58,8 +58,8 @@ class GameWindow <Gosu::Window
     # @starscrollsp = Gosu::Image.new(self,"img/Starclose.png", false)
     @startBackground = Gosu::Image.new(self, "img/Title.png", false)
     @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
-    @shop = Gosu::Image.new(self, "img/checkout.png", false)
-    @preshop = Gosu::Image.new(self, "img/bilan.png", false)
+    @shop = Gosu::Image.new(self, "img/ShopFonf.png", false)
+    @preshop = Gosu::Image.new(self, "img/ShopFonf.png", false)
     @iconShield = Gosu::Image.new(self, "img/Ishield.png",false)
     @iconInvest = Gosu::Image.new(self, "img/IIally.png",false)
     @iconLoan = Gosu::Image.new(self, "img/Iloan.png",false)
@@ -139,16 +139,16 @@ class GameWindow <Gosu::Window
       if button_down? Gosu::KbReturn; @gameState = 1;end
       if @total_balance > 0
         if button_down? Gosu::MsLeft
-          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
+          if mouse_x <400 && mouse_x > 300 && mouse_y <400 && mouse_y > 300
             @player.shield += 50
             @total_balance -= 20
             sleep(0.5)
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
+          elsif mouse_x <400 && mouse_x > 300 && mouse_y <510 && mouse_y >  410
             @player.ally += 1
             @goodguy << Ally.new(self, self.width/2, self.height - 10)
             @total_balance -= 20
             sleep(0.5)
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
+          elsif mouse_x <400 && mouse_x > 300 && mouse_y <620 && mouse_y > 520
             @player.loan += 1
             @total_balance +=700
             @player.daypay -= 300
@@ -157,16 +157,16 @@ class GameWindow <Gosu::Window
         end
       elsif @total_balance <= 0
         if button_down? Gosu::MsLeft
-          if mouse_x <100 && mouse_x > 50 && mouse_y <150 && mouse_y > 50
+          if mouse_x <400 && mouse_x > 300 && mouse_y <400 && mouse_y > 300
             @player.shield += 50
             @total_balance -= 30
             sleep(0.5)
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <260 && mouse_y >  160
+          elsif mouse_x <400 && mouse_x > 300 && mouse_y <510 && mouse_y >  410
             @player.ally += 1
             @goodguy << Ally.new(self, self.width/2, self.height - 50)
             @total_balance -= 30
             sleep(0.5)
-          elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
+          elsif mouse_x <400 && mouse_x > 300 && mouse_y <620 && mouse_y > 520
             @player.loan += 1
             @total_balance +=700
             @player.daypay -= 200
@@ -250,9 +250,9 @@ class GameWindow <Gosu::Window
       @quit.draw width/2- @quit.width/2 , height/2- @quit.height/2 + @quit.height, 1
     elsif @gameState == 4
       @preshop.draw(0,0,0)
-      @dayEnd.draw(           "_-{]  Bataille _-| #{@day} |-_ est finie !",50,20,1 )
-      @balance.draw(          "_-{]  Ta reserve de balle est :    #{@player.balance}",50, 65,1)
-      @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
+      @dayEnd.draw(           "_-{]  Bataille _-| #{@day} |-_ est finie !",100,100,1 )
+      @balance.draw(          "_-{]  Ta reserve de balle est :    #{@player.balance}",100, 145,1)
+      @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",100,190,1)
       @continue.draw(50,600,1)
     elsif @gameState == 5
       @shop.draw(0,0,0)
@@ -261,17 +261,17 @@ class GameWindow <Gosu::Window
         @bankMessage.draw("Hum ... Vous avez des DISPONIBILITES." , 1000,600,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Peut etre pouvons nous vous PROPOSER" , 1000,650,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("des AMELIORATIONS " , 1000,710,1,1,1,Gosu::Color::BLACK)
-        @iconShield.draw(50,50,2)
-        @iconInvest.draw(50,160,2)
-        @iconLoan.draw(50,270,2)
+        @iconShield.draw(300,300,2)
+        @iconInvest.draw(300,410,2)
+        @iconLoan.draw(300,520,2)
         @start_text1.draw width/2 - @start_text1.width/2, height- 170, 10
       elsif @total_balance < 0
         @bankMessage.draw("Hum ... Vous etes a DECOUVERT." , 1000,600,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Les prochains jours riquent d'etre DURS", 1000,655,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Nous pensons pouvoir vous AIDER " , 1000,710,1,1,1,Gosu::Color::BLACK)
-        @iconShield.draw(50,50,2)
-        @iconInvest.draw(50,160,2)
-        @iconLoan.draw(50,270,2)
+        @iconShield.draw(300,300,2)
+        @iconInvest.draw(300,410,2)
+        @iconLoan.draw(300,520,2)
         @start_text1.draw 50, height- 170, 10
       end
     elsif @gameState == 6
