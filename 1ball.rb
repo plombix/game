@@ -11,7 +11,7 @@ require 'rubygems'
 
 
 class GameWindow <Gosu::Window
-  attr_accessor :total_balance
+
   def initialize
     super(1620, 1024, false)
 
@@ -30,8 +30,7 @@ class GameWindow <Gosu::Window
     @arc = 0
     @skrolIndex = 0
     @total_balance = 0
-    @balance_max = 100.0
-    @dead = 0
+    @balance_max = 1000.0
     @gameState = 0          # 0 = Start menu  1 = Game in progress  2 = Game in pause  3 = Game in end of day 4 = Game in mana
     #############Sounds
     @wait_a_min = Gosu::Sample.new(self, "sound/wait-a-minute.wav")
@@ -61,27 +60,16 @@ class GameWindow <Gosu::Window
     @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
     @shop = Gosu::Image.new(self, "img/checkout.png", false)
     @preshop = Gosu::Image.new(self, "img/bilan.png", false)
-    @iconShield = Gosu::Image.new(self, "img/Shieldbutton.png",false)
-    @iconInvest = Gosu::Image.new(self, "img/UpgradeButton.png",false)
-    @iconLoan = Gosu::Image.new(self, "img/HandButton.png",false)
+    @iconShield = Gosu::Image.new(self, "img/Ishield.png",false)
+    @iconInvest = Gosu::Image.new(self, "img/IIally.png",false)
+    @iconLoan = Gosu::Image.new(self, "img/Iloan.png",false)
     @pointer = Gosu::Image.new(self, "img/pointer.png",false)
     @dmg2 = Gosu::Image.new(self,"img/dmg.png", false)
-    # img dead
-    @dead0 = Gosu::Image.new(self,"img/DeadBackground00.png", false)
-    @dead1 = Gosu::Image.new(self,"img/DeadBackground01.png", false)
-    @dead2 = Gosu::Image.new(self,"img/DeadBackground02.png", false)
-    @dead3 = Gosu::Image.new(self,"img/DeadBackground03.png", false)
-    @dead4 = Gosu::Image.new(self,"img/DeadBackground04.png", false)
-    @dead5 = Gosu::Image.new(self,"img/DeadBackground05.png", false)
-    @dead6 = Gosu::Image.new(self,"img/DeadBackground06.png", false)
-    @dead7 = Gosu::Image.new(self,"img/DeadBackground07.png", false)
+    @dead = Gosu::Image.new(self,"img/Dead.png",false)
     #############Entity
     @player = Player.new(self)
     @badguy<< Fighter.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Fighter.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Fighter.new(self , (width/6)*5,@seed[4])
     @seed.rotate(@badguy.size)
-    ############tableau
-    @tab_dead = []
-    @tab_dead << @dead0 << @dead1 << @dead2 << @dead3 << @dead4 << @dead5 << @dead6 << @dead7
   end
 
   def up_frame ;@frame +=1 ;@skrolIndex +=10 ;if @skrolIndex >= 0 then @skrolIndex = -@starscroll.height+1024 end ;end
@@ -91,16 +79,15 @@ class GameWindow <Gosu::Window
   def update
     self.up_frame
     if @gameState == 0                                                 # 0 = Start menu
+      @player.energy = 500
       if button_down? Gosu::KbReturn; @gameState = 1; elsif button_down? Gosu::KbEscape; close; end
     elsif @gameState == 1                                              # 1 = Game in progress
       ####################################### Basic movement an shooting states update
       @totaltime += 1
+      if @player.energy < 0 ;@gameState = 6;end
       if button_down? Gosu::KbEscape ;@gameState = 2 ;self.frameReset ;end
       @player.warp(mouse_x, mouse_y)
       if (@player.hurt_by(@bulletfall) == true)
-        if @player.energy <= 0
-          @gameState = 6
-        end
         @arc = 30;
       end
       if button_down? Gosu::MsLeft; if @frame % @player.shootSpeed == 0; @bulletrain<< Bullet.new(self ,@player.x-12, (@player.y-20)); @player.balance_down 1; end; end
@@ -144,14 +131,10 @@ class GameWindow <Gosu::Window
     elsif  @gameState == 3
       puts @gameState
       @day+=1
-      @total_balance += @player.balance/100
+      @total_balance += @player.balance/10
       @gameState = 4
     elsif @gameState == 4
       if button_down? Gosu::KbReturn ;sleep(0.5);@gameState = 5;end
-    elsif @gameState == 6
-      if button_down? Gosu::KbEscape
-       close;
-      end
     elsif @gameState == 5
       if button_down? Gosu::KbReturn; @gameState = 1;end
       if @total_balance > 0
@@ -167,7 +150,7 @@ class GameWindow <Gosu::Window
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
             @player.loan += 1
-            @total_balance +=50.0
+            @total_balance +=700
             @player.daypay -= 300
             sleep(0.5)
           end
@@ -185,26 +168,24 @@ class GameWindow <Gosu::Window
             sleep(0.5)
           elsif mouse_x <100 && mouse_x > 50 && mouse_y <370 && mouse_y > 270
             @player.loan += 1
+            @total_balance +=700
             @player.daypay -= 200
-            @total_balance += 50.0
             sleep(0.5)
           end
         end
       end
-        if button_down? Gosu::KbReturn
-          @day +=1
-          @player.balance = ( 1000 - @player.loan * 200)
-          @bulletrain = []
-          @phase = 0
+      if button_down? Gosu::KbReturn
+        @day +=1
+        @player.balance = ( 1000 - @player.loan * 200)
+        @bulletrain = []
+        @phase = 0
 
-          @badguy<< Fighter.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Fighter.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Fighter.new(self , (width/6)*5,@seed[4])
-          @gameState = 1
-          if @total_balance <= -100
-            @gameState = 6
-          end
+        @badguy<< Fighter.new(self ,self.width/6,@seed[0])<< Fighter.new(self , (width/6)*2,@seed[1])<< Fighter.new(self , (width/6)*3,@seed[2])<< Fighter.new(self , (width/6)*4,@seed[3])<< Fighter.new(self , (width/6)*5,@seed[4])
+        @gameState = 1
 
-        
       end
+    elsif @gameState == 6
+      if button_down? Gosu::KbReturn;sleep(0.5); @gameState = 0; elsif button_down? Gosu::KbEscape; close;end
     end
   end
 
@@ -274,8 +255,8 @@ class GameWindow <Gosu::Window
       @totalBalance.draw(    "_-{]  Ton solde est :              #{@total_balance}",50,110,1)
       @continue.draw(50,600,1)
     elsif @gameState == 5
-      @pointer.draw(mouse_x, mouse_y,3)
       @shop.draw(0,0,0)
+      @pointer.draw(mouse_x, mouse_y,3)
       if @total_balance > 0
         @bankMessage.draw("Hum ... Vous avez des DISPONIBILITES." , 1000,600,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Peut etre pouvons nous vous PROPOSER" , 1000,650,1,1,1,Gosu::Color::BLACK)
@@ -284,7 +265,7 @@ class GameWindow <Gosu::Window
         @iconInvest.draw(50,160,2)
         @iconLoan.draw(50,270,2)
         @start_text1.draw width/2 - @start_text1.width/2, height- 170, 10
-      elsif @total_balance <= 0
+      elsif @total_balance < 0
         @bankMessage.draw("Hum ... Vous etes a DECOUVERT." , 1000,600,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Les prochains jours riquent d'etre DURS", 1000,655,1,1,1,Gosu::Color::BLACK)
         @bankMessage.draw("Nous pensons pouvoir vous AIDER " , 1000,710,1,1,1,Gosu::Color::BLACK)
@@ -293,12 +274,10 @@ class GameWindow <Gosu::Window
         @iconLoan.draw(50,270,2)
         @start_text1.draw 50, height- 170, 10
       end
-    elsif  @gameState == 6
-      if @frame % 10 == 0
-        @dead += 1
-        @dead = @dead % 8
-      end
-      @tab_dead[@dead].draw_as_quad(0, 0, 0xffffffff, self.width, 0, 0xffffffff, self.width, self.height, 0xffffffff, 0, self.height, 0xffffffff, 0)
+    elsif @gameState == 6
+      @dead.draw(0,0,0)
+      @start_text1.draw width/2 - @start_text1.width/2, height- 170, 10
+      @start_text2.draw width/2 - @start_text2.width/2, height- 100, 10
     end
   end
   ######################################## controlls whith no effects in phase or state gestion
@@ -327,8 +306,8 @@ class Player
     @shootSpeed = 8
     @daypay = 1000
     @balance = 1000
-    @energy = 1000
-    @shield = 100
+    @energy = 500
+    @shield = 0
     @loan = 0
     @ally = 0
   end
@@ -453,10 +432,10 @@ class Enemy
     @total_balance = 1
     @x = x
     @y = y
-    @max_energy = 10 - (window.total_balance / 10)
+    @max_energy = 10
     @moveSpeed = 1
     @energy = @max_energy
-    @shootSpeed = 10 + (window.total_balance / 10)
+    @shootSpeed = 10
     @image = Gosu::Image.new(window,"img/Enemy1.png")
     @damaged = Array.new
   end
@@ -498,10 +477,10 @@ end
 class Assault <Enemy
   def initialize(window, x, y)
     super
-    @max_energy = 15 - (window.total_balance / 15)
+    @max_energy = 15
     @moveSpeed = 1
     @energy = @max_energy
-    @shootSpeed = 8 + (window.total_balance / 10)
+    @shootSpeed = 8
     @image = Gosu::Image.new(window,"img/Enemy2.png")
   end
   # def move (x,y);           @x= x; @y = y + @moveSpeed; end
@@ -523,9 +502,9 @@ class Cruiser<Enemy
   def initialize(window, x, y)
     super
     @moveSpeed = 1
-    @max_energy = 50 - (window.total_balance / 50)
+    @max_energy = 50
     @energy = @max_energy
-    @shootSpeed =5 + (window.total_balance / 10)
+    @shootSpeed =5
     @image = Gosu::Image.new(window,"img/Enemy3.png")
     @windowWidth = window.width
   end
