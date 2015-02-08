@@ -30,6 +30,7 @@ class GameWindow <Gosu::Window
     @arc = 0
     @skrolIndex = 0
     @total_balance = 0
+    @balance_max = 2000.0
     @gameState = 0          # 0 = Start menu  1 = Game in progress  2 = Game in pause  3 = Game in end of day 4 = Game in mana
     #############Sounds
     @wait_a_min = Gosu::Sample.new(self, "sound/wait-a-minute.wav")
@@ -52,6 +53,8 @@ class GameWindow <Gosu::Window
     @current_energy = Gosu::Font.new(self, "font/simple.TTF",  70)
     @background_image = Gosu::Image.new(self, "img/bg_starVII.png", false)
     @starscroll = Gosu::Image.new(self,"img/StarFar.png", false)
+    @redgreen = Gosu::Image.new(self,"img/redgreen.png", false)
+    @needle = Gosu::Image.new(self,"img/needle.png", false)
     # @starscrollsp = Gosu::Image.new(self,"img/Starclose.png", false)
     @startBackground = Gosu::Image.new(self, "img/Title.png", false)
     @damageFire = Gosu::Image.load_tiles(self, "img/SpriteHit.png", 96,96, false)
@@ -120,6 +123,9 @@ class GameWindow <Gosu::Window
           @gameState = 3
         end
       end
+      angle = (@total_balance * -45.0) / @balance_max;
+      @redgreen.draw(0, self.height - @redgreen.height,10);
+      @needle.draw_rot(10, self.height - 10, 10, angle + 45.0, 0.5, 1);
     elsif @gameState == 2                                         # 2 = Game in pause
       if button_down? Gosu::KbReturn ;sleep(0.5);@gameState = 1 ;elsif button_down? Gosu::KbP ;close ;end
     elsif  @gameState == 3
