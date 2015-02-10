@@ -1,1 +1,2 @@
-A ruby/gosu scroll game 
+A ruby/gosu scroll shooting game 
+
